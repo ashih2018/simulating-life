@@ -1,7 +1,7 @@
-module rateDivider(d, clock, clock_slower, reset_n);
+module rateDivider(d, clock, clock_slower, reset);
   input [7:0]d; // use decimal
   input clock;
-  input reset_n;
+  input reset;
   output clock_slower;
   
   reg [7:0]q; // use decimal
@@ -10,7 +10,7 @@ module rateDivider(d, clock, clock_slower, reset_n);
 
   always @(posedge clock)
   begin
-    if (reset_n == 1'b0)
+    if (reset == 1'b0)
       q <= 1'd0;
     else if (q == 1'd0)
       q <= d;
