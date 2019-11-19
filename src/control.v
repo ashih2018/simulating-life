@@ -3,21 +3,24 @@ module control(
   reset,
   set,
   clock,
+  stop,
   ldX,
   ldY,
   loadVal,
   writeEn,
-  draw
+  draw,
+  current_state
 );
   input go;
   input reset;
   input set;
+  input stop;
   input clock;
   input loadVal;
   output reg ldX;
   output reg ldY;
   output draw;
-  output reg [3:0] current_state
+  output reg [3:0] current_state;
 
   reg [3:0] next_state;
   
@@ -53,12 +56,12 @@ module control(
   always @(*)
   begin: outut_logic
     // default
-    writeEn = 0;
+    draw = 0;
     ldX = 0;
     ldY = 0;
     draw = 0;
     case (current_state)
-      BASE: writeEn = 0;
+      BASE: draw = 0;
       LOAD_X: ldX = 1;
       LOAD_Y: ldY = 1;
       DRAW: draw = 1;
