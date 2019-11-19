@@ -46,9 +46,8 @@ module main
     
 endmodule
 
-module datapath(clock, start, x_in, y_in, reset_n, out_x, out_y);
-	input clock;
-  input start;
+module simulation(load, x_in, y_in, reset_n, out_x, out_y);
+  input load;
 	input reset_n;
   input [7:0] x_in;
   input [7:0] y_in;
@@ -57,8 +56,12 @@ module datapath(clock, start, x_in, y_in, reset_n, out_x, out_y);
 
   reg x_counter;
   reg y_counter;
-  reg cells [159:0][119:0];
+  reg cells [0:159][0:119];
   reg reset;
+  reg neighbors;
+
+  reg changed [0:160];
+  reg changed_count = 0;
 
   always @(*)
   begin
@@ -67,28 +70,72 @@ module datapath(clock, start, x_in, y_in, reset_n, out_x, out_y);
       integer j;
       for (i = 0; i < 160; i = i + 1) begin
         for (j = 0; j < 120; j = j + 1) begin
-          if (i == 50)
-            cells[i][j] = 1;
-          else
-            cells[i][j] = 0;
+          cells[i][j] = 0;
         end
       end
     end
-    assign out_x = cells[x_in][y_in];
-    assign out_y = cells[y_in][x_in];
 
-    // if (reset == 1) begin
-    //   cells[x_counter][y_counter] = 0;
-    //   x_counter = x_counter + 1;
-    //   y_counter = y_counter + 1;
-    //   if (x_counter >= 160) begin
-    //     x_counter = 0;
-    //   end
-    //   if (y_counter >= 120) begin
-    //     y_counter = 0;
-    //     reset = 0;
-    //   end
-    // end
+    if (load == 1) begin: LOAD
+      cells[i][j] = 1;
+    end
+
+    if (start == 1) begin: SIMULATE
+      integer row;
+      integer col;
+      integer i;
+      integer j;
+      integer a;
+      for (row = 0; row < 160; row = row + 1) begin
+        for (col = 0; col < 120; col = col + 1) begin
+          assign neighbors = 0;
+
+          if (cells[i][j] == 0) begin: DEAD
+            for (i = -1; i <= 1; i = i + 1) begin
+              for (j = -1; j <= 1; j = j + 1) begin
+                if ((row + i > 0) & (row + i < 160) & (col + j > 0) & (col + j < 160) & ~(col == row)) begin
+                  if (cells[row+i][col+j] == 1)
+                    assign neighbors = neighbors + 1;
+                end
+              end
+            end
+            // after checking all cells around, see if we change the cell or not
+            if (neighbors == 3) begin
+              changed[changed_count] = row;
+              changed[changed_count] = col;
+              assign changed_count = changed_count + 2;
+            end
+          end
+
+          else begin: ALIVE
+            for (i = -1; i <= 1; i = i + 1) begin
+              for (j = -1; j <= 1; j = j + 1) begin
+                if ((row + i > 0) & (row + i < 160) & (col + j > 0) & (col + j < 160) & ~(col == row)) begin
+                  if (cells[row+i][col+j] == 1)
+                    assign neighbors = neighbors + 1;
+                end
+              end
+            end
+            // after checking all cells around, see if we change the cell or not
+            if (neighbors <= 1) begin
+              changed[changed_count] = row;
+              changed[changed_count] = col;
+              assign changed_count = changed_count + 2;
+            end
+            if (neighbors >= 4) begin
+              changed[changed_count] = row;
+              changed[changed_count] = col;
+              assign changed_count = changed_count + 2;
+            end
+          end
+
+        end
+      end
+
+    for (a = 0; a < changed_count; a+=2) begin
+      cells[change[a]][change[a+1]] = ~cells[change[a]][change[a+1]];
+    end
+
+    end
   end
 
 endmodule
