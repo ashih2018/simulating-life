@@ -1,0 +1,8 @@
+# Ignore Mac system files
+.DS_store
+
+# Ignore work folder
+work 
+
+# Ignore all text files
+*.wlf
