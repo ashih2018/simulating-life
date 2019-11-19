@@ -19,9 +19,9 @@ add wave {/*}
 # First test case
 # Set input values using the force command, signal names need to be in {} brackets.
 force { loadVal } 2#1111
-force {reset} 1, 0 3 ns
+force {reset} 0, 1 3 ns
 force { set } 0, 1 5 ns, 0 7 ns, 1 9 ns, 0 11 ns
-force { go } 0, 1 13 ns, 0 21 ns, 1 27 ns
+force { go } 0, 1 13 ns, 0 15 ns, 1 27 ns
 force { stop } 1 21 ns, 0 25 ns
 force {clock} 0, 1 1 ns -r 2 ns
 # Run simulation for a few ns.

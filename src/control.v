@@ -18,7 +18,7 @@ module control(
   input loadVal;
   output reg ldX;
   output reg ldY;
-  output draw;
+  output reg draw;
   output reg [3:0] current_state;
 
   reg [3:0] next_state;
@@ -40,7 +40,7 @@ module control(
       LOAD_X_WAIT: next_state = set ? LOAD_Y : LOAD_X_WAIT;
       LOAD_Y: next_state = set ? LOAD_Y : LOAD_Y_WAIT;
       LOAD_Y_WAIT: next_state = go ? DRAW : LOAD_Y_WAIT;
-      DRAW: next_state = stop ? DRAW : DRAW_WAIT;
+      DRAW: next_state = stop ? DRAW_WAIT : DRAW;
       DRAW_WAIT: begin
        if (go == 1)
         next_state = DRAW;
