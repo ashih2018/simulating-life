@@ -16,13 +16,14 @@ log {/*}
 # add wave {/*} would add all items in top level simulation module.
 add wave {/*}
 
-# First test case
+# First test case - loading x,y -> drawing -> pause -> drawing -> stop -> loading x,y -> drawing
+# to understand what's going on see how the state changes based on the input.
 # Set input values using the force command, signal names need to be in {} brackets.
 force { loadVal } 2#1111
 force {reset} 0, 1 3 ns
-force { set } 0, 1 5 ns, 0 7 ns, 1 9 ns, 0 11 ns
-force { go } 0, 1 13 ns, 0 15 ns, 1 27 ns
-force { stop } 1 21 ns, 0 25 ns
+force { set } 0, 1 5 ns, 0 7 ns, 1 9 ns, 0 11 ns, 1 41 ns, 0 43 ns, 1 45 ns, 0 47 ns
+force { go } 0, 1 13 ns, 0 15 ns, 1 27 ns, 0 35 ns, 1 49 ns
+force { stop } 0, 1 21 ns, 0 25 ns, 1 37 ns, 0 39 ns
 force {clock} 0, 1 1 ns -r 2 ns
 # Run simulation for a few ns.
 run 70 ns
