@@ -46,25 +46,31 @@ module main
     
 endmodule
 
-module simulation(load, x_in, y_in, reset_n, out_x, out_y);
+module simulation(load, x_in, y_in, start, testx,testy, reset_n, out_x, out_y);
   input load;
 	input reset_n;
   input [7:0] x_in;
   input [7:0] y_in;
+  input [7:0] testx;
+  input [7:0] testy;
+  input start;
   output reg out_x;
   output reg out_y;
 
-  reg x_counter;
-  reg y_counter;
   reg cells [0:159][0:119];
   reg reset;
   reg neighbors;
 
+  reg [7:0]testing;
+  reg testingx;
+  reg testingy;
+
   reg changed [0:160];
-  reg changed_count = 0;
+  reg changed_count;
 
   always @(*)
   begin
+    assign changed_count = 0;
     if (reset_n == 0) begin: RESET
       integer i;
       integer j;
@@ -76,7 +82,7 @@ module simulation(load, x_in, y_in, reset_n, out_x, out_y);
     end
 
     if (load == 1) begin: LOAD
-      cells[i][j] = 1;
+      cells[x_in][y_in] = 1;
     end
 
     if (start == 1) begin: SIMULATE
@@ -89,7 +95,7 @@ module simulation(load, x_in, y_in, reset_n, out_x, out_y);
         for (col = 0; col < 120; col = col + 1) begin
           assign neighbors = 0;
 
-          if (cells[i][j] == 0) begin: DEAD
+          if (cells[row][col] == 0) begin: DEAD
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
                 if ((row + i > 0) & (row + i < 160) & (col + j > 0) & (col + j < 160) & ~(col == row)) begin
@@ -99,6 +105,9 @@ module simulation(load, x_in, y_in, reset_n, out_x, out_y);
               end
             end
             // after checking all cells around, see if we change the cell or not
+            if (row == 51 & col == 51) begin
+              testing = cells[row][col];
+            end
             if (neighbors == 3) begin
               changed[changed_count] = row;
               changed[changed_count] = col;
@@ -131,9 +140,11 @@ module simulation(load, x_in, y_in, reset_n, out_x, out_y);
         end
       end
 
-    for (a = 0; a < changed_count; a+=2) begin
-      cells[change[a]][change[a+1]] = ~cells[change[a]][change[a+1]];
+    for (a = 0; a < changed_count; a = a + 2) begin
+      cells[changed[a]][changed[a+1]] = ~cells[changed[a]][changed[a+1]];
     end
+
+    assign testingx = cells[51][51];
 
     end
   end

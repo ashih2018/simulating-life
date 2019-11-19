@@ -6,7 +6,6 @@ log {/*}
 # add wave {/*} would add all items in top level simulation module.
 add wave {/*}
 
-force {clock} 0 0, 1 5 -repeat 10
 
 force {load} 0 0, 1 10, 0 25, 1 50, 0 80
 
