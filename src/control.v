@@ -7,7 +7,6 @@ module control(
   ldX,
   ldY,
   loadVal,
-  writeEn,
   draw,
   current_state
 );
@@ -67,7 +66,7 @@ module control(
       DRAW: draw = 1;
       DRAW_WAIT: draw = 0;
       default: begin
-        writeEn = 0;
+        draw = 0;
         ldX = 0;
         ldY = 0;
         draw = 0;
