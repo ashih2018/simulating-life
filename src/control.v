@@ -7,9 +7,8 @@ module control(
   ldX,
   ldY,
   loadVal,
-  draw,
-  current_state
-);
+  draw
+  );
   input go;
   input reset;
   input set;
@@ -19,9 +18,8 @@ module control(
   output reg ldX;
   output reg ldY;
   output reg draw;
-  output reg [3:0] current_state;
 
-  reg [3:0] next_state;
+  reg [3:0] current_state, next_state;
   
 
   localparam BASE = 4'd0,
