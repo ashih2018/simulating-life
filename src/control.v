@@ -14,7 +14,7 @@ module control(
   input set;
   input stop;
   input clock;
-  input loadVal;
+  input [7:0]loadVal;
   output reg ldX;
   output reg ldY;
   output reg draw;
