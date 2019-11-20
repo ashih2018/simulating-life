@@ -7,7 +7,7 @@ module control(
   ldX,
   ldY,
   loadVal,
-  draw
+  start
   );
   input go;
   input reset;
@@ -17,7 +17,8 @@ module control(
   input [7:0]loadVal;
   output reg ldX;
   output reg ldY;
-  output reg draw;
+  output reg start;
+  output reg load;
 
   reg [3:0] current_state, next_state;
   
@@ -26,9 +27,9 @@ module control(
              LOAD_X = 4'd1,
              LOAD_X_WAIT = 4'd2,
              LOAD_Y = 4'd3,
-             LOAD_Y_WAIT = 4'd4,
-             DRAW = 4'd5,
-             DRAW_WAIT = 4'd6;
+             DRAW = 4'd4,
+             DRAW_WAIT = 4'd5,
+             SIMULATION = 4'd6;
   
   always @(*)
   begin: state_table
@@ -36,38 +37,38 @@ module control(
       BASE: next_state = set ? LOAD_X : BASE;
       LOAD_X: next_state = set ? LOAD_X : LOAD_X_WAIT;
       LOAD_X_WAIT: next_state = set ? LOAD_Y : LOAD_X_WAIT;
-      LOAD_Y: next_state = set ? LOAD_Y : LOAD_Y_WAIT;
-      LOAD_Y_WAIT: next_state = go ? DRAW : LOAD_Y_WAIT;
-      DRAW: next_state = stop ? DRAW_WAIT : DRAW;
+      LOAD_Y: next_state = set ? LOAD_Y : DRAW;
+      DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
        if (go == 1)
-        next_state = DRAW;
+        next_state = SIMULATION;
        else if (set == 1)
         next_state = LOAD_X;
        else
         next_state = DRAW_WAIT;
       end
+      SIMULATION: next_state = stop ? DRAW_WAIT : SIMULATION;
     endcase
   end // state_table
 
   always @(*)
   begin: outut_logic
     // default
-    draw = 0;
+    start = 0;
     ldX = 0;
     ldY = 0;
-    draw = 0;
+    load = 0;
     case (current_state)
-      BASE: draw = 0;
+      BASE: start = 0;
       LOAD_X: ldX = 1;
       LOAD_Y: ldY = 1;
-      DRAW: draw = 1;
-      DRAW_WAIT: draw = 0;
+      DRAW: load = 1;
+      SIMULATION: start = 1;
       default: begin
-        draw = 0;
+        start = 0;
         ldX = 0;
         ldY = 0;
-        draw = 0;
+        load = 0;
       end
     endcase
   end
