@@ -24,6 +24,6 @@ force { KEY[1] } 0, 1 3 ns
 force { KEY[2] } 0, 1 5 ns, 0 7 ns, 1 9 ns, 0 11 ns, 1 41 ns, 0 43 ns, 1 45 ns, 0 47 ns
 force { KEY[0] } 0, 1 15 ns, 0 17 ns, 1 27 ns, 0 35 ns, 1 51 ns
 force { KEY[3] } 0, 1 21 ns, 0 25 ns, 1 37 ns, 0 39 ns
-force {clock} 0, 1 1 ns -r 2 ns
+force {CLOCK_50} 0, 1 1 ns -r 2 ns
 # Run simulation for a few ns.
 run 70 ns

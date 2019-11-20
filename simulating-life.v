@@ -31,7 +31,7 @@ module main
 	output	[9:0]	VGA_B;   				//	VGA Blue[9:0]
 	
 	wire reset_n;
-	assign reset_n = KEY[0];
+	assign reset_n = KEY[1];
 	
 	// Create the colour, x, y and writeEn wires that are inputs to the controller.
 	wire [2:0] colour;
@@ -47,30 +47,32 @@ module main
 	// Define the number of colours as well as the initial background
 	// image file (.MIF) for the controller.
 
-	vga_adapter VGA(
-			.reset_n(reset_n),
-			.clock(CLOCK_50),
-			.colour(colour),
-			.x(x),
-			.y(y),
-			.plot(writeEn),
-			/* Signals for the DAC to drive the monitor. */
-			.VGA_R(VGA_R),
-			.VGA_G(VGA_G),
-			.VGA_B(VGA_B),
-			.VGA_HS(VGA_HS),
-			.VGA_VS(VGA_VS),
-			.VGA_BLANK(VGA_BLANK_N),
-			.VGA_SYNC(VGA_SYNC_N),
-			.VGA_CLK(VGA_CLK));
-		defparam VGA.RESOLUTION = "160x120";
-		defparam VGA.MONOCHROME = "FALSE";
-		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
-		defparam VGA.BACKGROUND_IMAGE = "black.mif";
+	// vga_adapter VGA(
+	// 		.reset_n(reset_n),
+	// 		.clock(CLOCK_50),
+	// 		.colour(colour),
+	// 		.x(x),
+	// 		.y(y),
+	// 		.plot(writeEn),
+	// 		/* Signals for the DAC to drive the monitor. */
+	// 		.VGA_R(VGA_R),
+	// 		.VGA_G(VGA_G),
+	// 		.VGA_B(VGA_B),
+	// 		.VGA_HS(VGA_HS),
+	// 		.VGA_VS(VGA_VS),
+	// 		.VGA_BLANK(VGA_BLANK_N),
+	// 		.VGA_SYNC(VGA_SYNC_N),
+	// 		.VGA_CLK(VGA_CLK));
+	// 	defparam VGA.RESOLUTION = "160x120";
+	// 	defparam VGA.MONOCHROME = "FALSE";
+	// 	defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
+	// 	defparam VGA.BACKGROUND_IMAGE = "black.mif";
 
-  reg x_in[7:0];
-  reg y_in[7:0];
-  reg loadVal = SW[7:0];
+  reg [7:0]x_in;
+  reg [7:0]y_in;
+  wire [7:0]loadVal;
+
+  assign loadVal = SW[7:0];
 
   always @(*)
   begin
@@ -82,10 +84,10 @@ module main
   
   control c1(
   .go(KEY[0]),
-  .reset(KEY[1]),
+  .reset(reset_n),
   .set(KEY[2]),
   .clock(CLOCK_50),
-  .loadVal(SW[7:0])
+  .loadVal(SW[7:0]),
   .stop(KEY[3]),
   .ldX(loadX),
   .ldY(loadY),
