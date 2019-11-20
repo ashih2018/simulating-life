@@ -3,10 +3,11 @@ module control(
   reset,
   set,
   clock,
+  loadVal,
   stop,
   ldX,
   ldY,
-  loadVal,
+  load,
   start
   );
   input go;
