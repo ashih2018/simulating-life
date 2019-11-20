@@ -44,36 +44,30 @@ module main
     
 endmodule
 
-module simulation(clock, load, x_in, y_in, start, testx,testy, reset_n, out_x, out_y);
+module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
   input load;
 	input reset_n;
   input clock;
   input [7:0] x_in;
   input [7:0] y_in;
-  input [7:0] testx;
-  input [7:0] testy;
   input start;
-  output reg out_x;
-  output reg out_y;
+  output reg [7:0] out_x;
+  output reg [7:0] out_y;
 
   reg cells [0:159][0:119];
   reg [7:0] neighbors;
   reg draw;
-
-  reg [7:0]testing;
-  reg testingbit = 0;
-  reg testingx;
-  reg testingy;
-  reg [7:0] foo;
-  reg [7:0] bar;
-
-  // reg [7:0] row = 0;
-  // reg [7:0] col = 0;
   reg [7:0] changed [0:160];
   reg [7:0] changed_count;
 
+  reg [7:0]testingbit;
+  reg [7:0] foo;
+
+  // $display("draw    = %0d",draw);
   always @(*)
   begin
+    assign testingbit = cells[51][51];
+    assign foo = cells[7][14];
     if (reset_n == 0) begin: RESET
       integer i;
       integer j;
@@ -90,19 +84,16 @@ module simulation(clock, load, x_in, y_in, start, testx,testy, reset_n, out_x, o
       cells[x_in][y_in] = 1;
       out_x = x_in;
       out_y = y_in;
+      assign draw = 0;
     end
 
     if (draw == 1) begin: DRAW
-      $display("draw    = %0d",draw);
-      $display("changedcount    = %0d",changed_count);
       if (changed_count > 0) begin
         cells[changed[changed_count-2]][changed[changed_count-1]] = ~cells[changed[changed_count-2]][changed[changed_count-1]];
         assign out_x = changed[changed_count-2];
         assign out_y = changed[changed_count-1];
         assign changed_count = changed_count - 2;
-        $display("changedct    = %0d",changed_count);
         if (changed_count <= 0) begin
-          $display("changed2    = %0d",1);
           assign draw = 0;
         end
       end
@@ -114,11 +105,7 @@ module simulation(clock, load, x_in, y_in, start, testx,testy, reset_n, out_x, o
       integer i;
       integer j;
       integer a;
-      assign draw = 1;
       assign changed_count = 0;
-      // $display("precell    = %0d",cells[50][50]);
-      // $display("precell    = %0d",cells[51][50]);
-      // $display("precell    = %0d",cells[50][51]);
       for (row = 0; row < 160; row = row + 1) begin
         for (col = 0; col < 120; col = col + 1) begin
           assign neighbors = 0;
@@ -134,63 +121,44 @@ module simulation(clock, load, x_in, y_in, start, testx,testy, reset_n, out_x, o
             end
             // after checking all cells around, see if we change the cell or not
             if (neighbors == 3) begin
-              $display("row    = %0d",row);
-              $display("col    = %0d",col);
               changed[changed_count] = row;
               changed[changed_count + 1] = col;
               assign changed_count = changed_count + 2;
-              $display("changed_row    = %0d",changed[0]);
-              $display("changed_row    = %0d",changed[1]);
-              $display("changed_row    = %0d",changed[2]);
-              $display("changed_row    = %0d",changed[3]);
-              $display("changed    = %0d",changed_count);
+              assign draw = 1;
             end
           end
 
           else begin: ALIVE
-            // $display("row   = %0d",row);
-            // $display("col   = %0d",col);
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
                 if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 160) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1) begin
-                    // $display("col sdfs   = %0d",cells[row+i][col+j]);
                     assign neighbors = neighbors + 1;
-                    // $display("neighbors   = %0d",neighbors);
                   end
                 end
               end
             end
-            if (row == 51 & col == 50) begin
-              // $display("row    = %0d",row);
-              assign testingbit = row;
-              // $display("row    = %0d",row);
-              // $display("col    = %0d",col);
-              // $display("cell    = %0d",cells[50][50]);
-              // $display("cell    = %0d",cells[51][50]);
-              // $display("cell    = %0d",cells[50][51]);
-              // $display("neighbors    = %0d",neighbors);
-            end
             // after checking all cells around, see if we change the cell or not
             if (neighbors <= 1) begin
+              if (row == 7 & col == 14) begin
+                $display("no1    = %0d",row);
+              end
               changed[changed_count] = row;
               changed[changed_count + 1] = col;
               assign changed_count = changed_count + 2;
+              assign draw = 1;
             end
             if (neighbors >= 4) begin
               changed[changed_count] = row;
               changed[changed_count + 1] = col;
               assign changed_count = changed_count + 2;
+              assign draw = 1;
             end
           end
-
         end
       end
-
     end
-
   end
-
 endmodule
 
 
