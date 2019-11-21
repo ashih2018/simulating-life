@@ -82,10 +82,10 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
   output reg [7:0] out_x;
   output reg [7:0] out_y;
 
-  reg cells [0:159][0:119];
+  reg cells [0:3][0:3];
   reg [7:0] neighbors;
   reg draw;
-  reg [7:0] changed [0:160];
+  reg [7:0] changed [0:5];
   reg [7:0] changed_count;
 
   reg [7:0]testingbit;
@@ -97,9 +97,9 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
     if (reset_n == 0) begin: RESET
       integer i;
       integer j;
-      for (i = 0; i < 160; i = i + 1) begin
-        for (j = 0; j < 120; j = j + 1) begin
-          cells[i][j] = 0;
+      for (i = 0; i < 4; i = i + 1) begin
+        for (j = 0; j < 4; j = j + 1) begin
+          cells[i][j] <= 0;
           $display("cells    = %0d",cells[i][j]);
         end
       end
@@ -111,8 +111,8 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
       cells[x_in][y_in] = 1;
       out_x <= x_in;
       out_y <= y_in;
-      $display("draw    = %0d",out_x);
-      $display("draw    = %0d",out_y);
+      // $display("draw    = %0d",out_x);
+      // $display("draw    = %0d",out_y);
       draw <= 0;
     end
 
@@ -122,9 +122,9 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
         out_x <= changed[changed_count-2];
         out_y <= changed[changed_count-1];
         changed_count <= changed_count - 2;
-        $display("out x    = %0d",out_x);		
-        $display("out y    = %0d",out_y);		
-        $display("changed    = %0d",changed_count);
+        // $display("out x    = %0d",out_x);		
+        // $display("out y    = %0d",out_y);		
+        // $display("changed    = %0d",changed_count);
         if (changed_count <= 0) begin
           draw <= 0;
         end
@@ -138,26 +138,20 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
       integer j;
       integer a;
       changed_count <= 0;
-      for (row = 0; row < 160; row = row + 1) begin
-        for (col = 0; col < 120; col = col + 1) begin
+      for (row = 0; row < 4; row = row + 1) begin
+        for (col = 0; col < 4; col = col + 1) begin
           neighbors <= 0;
-          $display("cells    = %0d",cells[row][col]);
           if (cells[row][col] == 0) begin: DEAD
-          $display("51    = %0d",row);
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 160) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1)
                     neighbors <= neighbors + 1;
                 end
               end
             end
-            if (row == 51 & col == 51) begin
-              $display("51    = %0d",neighbors);
-            end
             // after checking all cells around, see if we change the cell or not
             if (neighbors == 3) begin
-              $display("50    = %0d",row);
               changed[changed_count] = row;
               changed[changed_count + 1] = col;
               changed_count <= changed_count + 2;
@@ -168,7 +162,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
           else begin: ALIVE
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 160) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1) begin
                     neighbors <= neighbors + 1;
                   end
@@ -177,9 +171,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
             end
             // after checking all cells around, see if we change the cell or not
             if (neighbors <= 1) begin
-              if (row == 7 & col == 14) begin
-                $display("no1    = %0d",row);
-              end
               changed[changed_count] = row;
               changed[changed_count + 1] = col;
               changed_count <= changed_count + 2;
