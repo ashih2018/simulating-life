@@ -68,14 +68,14 @@ module main
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "black.mif";
 
-  module simulation(.clock(CLOCK_50), .load(load), .x_in(), .y_in(), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y));
+  // module simulation(.clock(CLOCK_50), .load(load), .x_in(), .y_in(), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y));
 
 endmodule
 
-module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
+module simulation(load, x_in, y_in, start, reset_n, out_x, out_y);
   input load;
 	input reset_n;
-  input clock;
+  // input clock;
   input [7:0] x_in;
   input [7:0] y_in;
   input start;
@@ -108,32 +108,47 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
       assign changed_count = 0;
     end
 
-    if (load == 1) begin: LOAD
+    else if (load == 1) begin: LOAD
       cells[x_in][y_in] = 1;
-      out_x = x_in;
-      out_y = y_in;
+      assign out_x = x_in;
+      assign out_y = y_in;
+      $display("x_in    = %0d",x_in);
+      $display("y_in    = %0d",y_in);
       assign draw = 0;
     end
 
-    if (draw == 1) begin: DRAW
-      if (changed_count > 0) begin
+    else if (draw == 1) begin: DRAW
+      if (changed_count >= 0) begin
         cells[changed[changed_count-2]][changed[changed_count-1]] = ~cells[changed[changed_count-2]][changed[changed_count-1]];
-        assign out_x = changed[changed_count-2];
-        assign out_y = changed[changed_count-1];
         assign changed_count = changed_count - 2;
+        assign out_x = changed[changed_count];
+        assign out_y = changed[changed_count+1];
+        $display("out x    = %0d",out_x);
+        $display("out y    = %0d",out_y);
+        $display("changed    = %0d",changed_count);
+        // assign changed_count = changed_count - 2;
+        // $display("out x2    = %0d",out_x);
+        // $display("out y2    = %0d",out_y);
+        // $display("changed    = %0d",changed_count);
         if (changed_count <= 0) begin
           assign draw = 0;
         end
       end
+      // $display("out x end    = %0d",out_x);
+      // $display("out y end    = %0d",out_y);
     end
+    // $display("out x end    = %0d",out_x);
+    // $display("out y end    = %0d",out_y);
 
-    if (start == 1 & draw == 0) begin: SIMULATE
+    else if (start == 1 & draw == 0) begin: SIMULATE
       integer row;
       integer col;
       integer i;
       integer j;
       integer a;
       assign changed_count = 0;
+      // $display("out x end    = %0d",out_x);
+      // $display("out y end    = %0d",out_y);
       for (row = 0; row < 160; row = row + 1) begin
         for (col = 0; col < 120; col = col + 1) begin
           assign neighbors = 0;
@@ -141,7 +156,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
           if (cells[row][col] == 0) begin: DEAD
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 160) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 120) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1)
                     assign neighbors = neighbors + 1;
                 end
@@ -159,7 +174,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
           else begin: ALIVE
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 160) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 120) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1) begin
                     assign neighbors = neighbors + 1;
                   end
