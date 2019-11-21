@@ -72,7 +72,7 @@ module main
 
 endmodule
 
-module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, writeEn);
+module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
   input load;
 	input reset_n;
   input clock;
@@ -81,7 +81,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, writeEn
   input start;
   output reg [7:0] out_x;
   output reg [7:0] out_y;
-  output writeEn;
 
   reg cells [0:159][0:119];
   reg [7:0] neighbors;
@@ -95,8 +94,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, writeEn
   // $display("draw    = %0d",draw);
   always @(posedge clock)
   begin
-    testingbit <= cells[51][51];
-    foo <= cells[7][14];
     if (reset_n == 0) begin: RESET
       integer i;
       integer j;
@@ -112,8 +109,8 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, writeEn
 
     else if (load == 1) begin: LOAD
       cells[x_in][y_in] = 1;
-      out_x = x_in;
-      out_y = y_in;
+      out_x <= x_in;
+      out_y <= y_in;
       $display("draw    = %0d",out_x);
       $display("draw    = %0d",out_y);
       draw <= 0;
@@ -125,6 +122,9 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, writeEn
         out_x <= changed[changed_count-2];
         out_y <= changed[changed_count-1];
         changed_count <= changed_count - 2;
+        $display("out x    = %0d",out_x);		
+        $display("out y    = %0d",out_y);		
+        $display("changed    = %0d",changed_count);
         if (changed_count <= 0) begin
           draw <= 0;
         end
