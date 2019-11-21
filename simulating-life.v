@@ -72,10 +72,10 @@ module main
 
 endmodule
 
-module simulation(load, x_in, y_in, start, reset_n, out_x, out_y);
+module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
   input load;
 	input reset_n;
-  // input clock;
+  input clock;
   input [7:0] x_in;
   input [7:0] y_in;
   input start;
@@ -112,12 +112,12 @@ module simulation(load, x_in, y_in, start, reset_n, out_x, out_y);
       cells[x_in][y_in] = 1;
       assign out_x = x_in;
       assign out_y = y_in;
-      $display("x_in    = %0d",x_in);
-      $display("y_in    = %0d",y_in);
+      // $display("x_in    = %0d",x_in);
+      // $display("y_in    = %0d",y_in);
       assign draw = 0;
     end
 
-    else if (draw == 1) begin: DRAW
+    else if (clock == 1 & draw == 1) begin: DRAW
       if (changed_count >= 0) begin
         cells[changed[changed_count-2]][changed[changed_count-1]] = ~cells[changed[changed_count-2]][changed[changed_count-1]];
         assign changed_count = changed_count - 2;
