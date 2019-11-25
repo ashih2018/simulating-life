@@ -72,7 +72,7 @@ module main
 
 endmodule
 
-module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
+module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_color);
   input load;
 	input reset_n;
   input clock;
@@ -81,17 +81,19 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
   input start;
   output reg [7:0] out_x;
   output reg [7:0] out_y;
+  output reg [2:0] out_color;
 
   reg cells [0:3][0:3];
   reg [7:0] neighbors;
   reg draw;
-  reg [7:0] changed [0:5];
+  reg [7:0] changed [0:10];
+  reg [2:0] changed_color [0:10];
   reg [7:0] changed_count;
 
   reg [7:0]testingbit;
   reg [7:0] foo;
+  reg test;
 
-  // $display("draw    = %0d",draw);
   always @(posedge clock)
   begin
     if (reset_n == 0) begin: RESET
@@ -100,7 +102,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
       for (i = 0; i < 4; i = i + 1) begin
         for (j = 0; j < 4; j = j + 1) begin
           cells[i][j] <= 0;
-          $display("cells    = %0d",cells[i][j]);
         end
       end
       draw <= 0;
@@ -111,17 +112,15 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
       cells[x_in][y_in] = 1;
       out_x <= x_in;
       out_y <= y_in;
-      // $display("draw    = %0d",out_x);
-      // $display("draw    = %0d",out_y);
       draw <= 0;
     end
 
     else if (draw == 1) begin: DRAW
       if (changed_count > 0) begin
         cells[changed[changed_count-2]][changed[changed_count-1]] = ~cells[changed[changed_count-2]][changed[changed_count-1]];
-        out_x <= changed[changed_count-2];
-        out_y <= changed[changed_count-1];
-        changed_count <= changed_count - 2;
+        out_x <= changed[2*changed_count-2];
+        out_y <= changed[2*changed_count-1];
+        changed_count <= changed_count - 1;
         // $display("out x    = %0d",out_x);		
         // $display("out y    = %0d",out_y);		
         // $display("changed    = %0d",changed_count);
@@ -173,13 +172,15 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
             if (neighbors <= 1) begin
               changed[changed_count] = row;
               changed[changed_count + 1] = col;
-              changed_count <= changed_count + 2;
+              changed_color[changed_count] = 3'b0;
+              changed_count <= changed_count + 1;
               draw <= 1;
             end
             if (neighbors >= 4) begin
               changed[changed_count] = row;
               changed[changed_count + 1] = col;
-              changed_count <= changed_count + 2;
+              changed_color[changed_count] = 3'b0;
+              changed_count <= changed_count + 1;
               draw <= 1;
             end
           end
