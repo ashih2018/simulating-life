@@ -36,19 +36,26 @@ module main
 	// Create the colour, x, y and writeEn wires that are inputs to the controller.
 	wire [2:0] colour;
 	wire [7:0] x;
-	wire [6:0] y;
-	wire writeEn;
+	wire [7:0] y;
+	wire load;
 	wire loadY;
 	wire loadX;
-  wire load;
-  wire start;
+   wire writeEn;
+   wire start;
+   wire divided_clock;
+
+  assign writeEn = (load | start);
+
+  rateDivider d1(
+    .d(8'd50000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+  );
 
   // Create an Instance of a VGA controller - there can be only one!
 	// Define the number of colours as well as the initial background
 	// image file (.MIF) for the controller.
 
 	vga_adapter VGA(
-			.reset_n(reset_n),
+			.resetn(reset_n),
 			.clock(CLOCK_50),
 			.colour(colour),
 			.x(x),
@@ -71,7 +78,6 @@ module main
   reg [7:0]x_in;
   reg [7:0]y_in;
   wire [7:0]loadVal;
-  wire clock_slower;
 
   assign loadVal = SW[7:0];
 
@@ -82,9 +88,6 @@ module main
     if (loadY == 1'b1)
       y_in = loadVal;
   end
-  
-  
-  rateDivider r1(.d(8'd50000000), .clock(CLOCK_50), .clock_slower(clock_slower), .reset(reset_n));
   
   control c1(
   .go(KEY[0]),
@@ -99,10 +102,11 @@ module main
   .start(start)
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y));
+  simulation s1(.clock(divided_clock), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
+
 endmodule
 
-module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
+module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_color);
   input load;
 	input reset_n;
   input clock;
@@ -111,53 +115,66 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
   input start;
   output reg [7:0] out_x;
   output reg [7:0] out_y;
+  output reg [2:0] out_color;
 
-  reg cells [0:159][0:119];
-  reg [7:0] neighbors;
+  reg cells [0:3][0:3];
   reg draw;
-  reg [7:0] changed [0:160];
+  reg [7:0] changed [0:10];
+  reg [2:0] changed_color [0:10];
   reg [7:0] changed_count;
 
-  reg [7:0]testingbit;
-  reg [7:0] foo;
-
-  // $display("draw    = %0d",draw);
-  always @(*)
+  always @(posedge clock)
   begin
-    if (load == 1) begin: LOAD
-      cells[x_in][y_in] = 1;
-      out_x = x_in;
-      out_y = y_in;
-      draw = 0;
+    if (reset_n == 0) begin: RESET
+      // $display("1    = %0d",1);
+      integer i;
+      integer j;
+      for (i = 0; i < 4; i = i + 1) begin
+        for (j = 0; j < 4; j = j + 1) begin
+          cells[i][j] <= 0;
+        end
+      end
+      draw <= 0;
+      changed_count <= 0;
     end
 
-    if (draw == 1) begin: DRAW
-      if (changed_count > 0) begin
-        cells[changed[changed_count-2]][changed[changed_count-1]] = ~cells[changed[changed_count-2]][changed[changed_count-1]];
-        out_x = changed[changed_count-2];
-        out_y = changed[changed_count-1];
-        changed_count = changed_count - 2;
-        if (changed_count <= 0) begin
-          draw = 0;
-        end
+    else if (load == 1) begin: LOAD
+      cells[x_in][y_in] = 1;
+      out_x <= x_in;
+      out_y <= y_in;
+      out_color <= 3'b111;
+      draw <= 0;
+    end
+
+    else if (draw == 1) begin: DRAW
+      if (changed_count <= 0) begin
+        draw <= 0;
+      end
+      else if (changed_count > 0) begin
+        cells[changed[2*changed_count-2]][changed[2*changed_count-1]] <= ~cells[changed[2*changed_count-2]][changed[2*changed_count-1]];
+        out_x <= changed[2*changed_count-2];
+        out_y <= changed[2*changed_count-1];
+        out_color <= changed_color[changed_count-1];
+        changed_count <= changed_count - 1;
       end
     end
 
-    if (start == 1 & draw == 0) begin: SIMULATE
+    else if (start == 1 & draw == 0) begin: SIMULATE
       integer row;
       integer col;
       integer i;
       integer j;
-      integer a;
-      changed_count = 0;
-      for (row = 0; row < 160; row = row + 1) begin
-        for (col = 0; col < 120; col = col + 1) begin
+      integer neighbors;
+      integer num_changed;
+      changed_count <= 0;
+      num_changed = 0;
+      for (row = 0; row < 4; row = row + 1) begin
+        for (col = 0; col < 4; col = col + 1) begin
           neighbors = 0;
-
           if (cells[row][col] == 0) begin: DEAD
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 120) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1)
                     neighbors = neighbors + 1;
                 end
@@ -165,17 +182,18 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
             end
             // after checking all cells around, see if we change the cell or not
             if (neighbors == 3) begin
-              changed[changed_count] = row;
-              changed[changed_count + 1] = col;
-              changed_count = changed_count + 2;
-              draw = 1;
+              changed[2*num_changed] = row;
+              changed[2*num_changed + 1] = col;
+              changed_color[num_changed] = 3'b111;
+              num_changed = num_changed + 1;
+              draw <= 1;
             end
           end
 
           else begin: ALIVE
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 160) & (col + j >= 0) & (col + j < 120) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1) begin
                     neighbors = neighbors + 1;
                   end
@@ -184,25 +202,26 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y);
             end
             // after checking all cells around, see if we change the cell or not
             if (neighbors <= 1) begin
-              if (row == 7 & col == 14) begin
-                $display("no1    = %0d",row);
-              end
-              changed[changed_count] = row;
-              changed[changed_count + 1] = col;
-              changed_count = changed_count + 2;
-              draw = 1;
+              changed[2*num_changed] = row;
+              changed[2*num_changed + 1] = col;
+              changed_color[num_changed] = 3'b0;
+              num_changed = num_changed + 1;
+              draw <= 1;
             end
-            if (neighbors >= 4) begin
-              changed[changed_count] = row;
-              changed[changed_count + 1] = col;
-              changed_count = changed_count + 2;
-              draw = 1;
+            else if (neighbors >= 4) begin
+              changed[2*num_changed] = row;
+              changed[2*num_changed + 1] = col;
+              changed_color[num_changed] = 3'b0;
+              num_changed = num_changed + 1;
+              draw <= 1;
             end
           end
         end
       end
+      changed_count <= num_changed;
     end
   end
+ 
 endmodule
 
 module control(
@@ -228,6 +247,10 @@ module control(
   output reg start;
   output reg load;
 
+  wire simulate;
+  
+  assign simulate = ~go;
+
   reg [3:0] current_state, next_state;
   
 
@@ -248,14 +271,14 @@ module control(
       LOAD_Y: next_state = set ? LOAD_Y : DRAW;
       DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
-       if (go == 1)
+       if (simulate == 1)
         next_state = SIMULATION;
        else if (set == 1)
         next_state = LOAD_X;
        else
         next_state = DRAW_WAIT;
       end
-      SIMULATION: next_state = stop ? DRAW_WAIT : SIMULATION;
+      SIMULATION: next_state = simulate ? SIMULATION : DRAW_WAIT;
     endcase
   end // state_table
 

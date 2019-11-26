@@ -1,0 +1,10 @@
+
+State Machine - |main|control:c1|current_state
+Name current_state.SIMULATION current_state.DRAW_WAIT current_state.DRAW current_state.LOAD_Y current_state.LOAD_X_WAIT current_state.LOAD_X current_state.BASE 
+current_state.BASE 0 0 0 0 0 0 0 
+current_state.LOAD_X 0 0 0 0 0 1 1 
+current_state.LOAD_X_WAIT 0 0 0 0 1 0 1 
+current_state.LOAD_Y 0 0 0 1 0 0 1 
+current_state.DRAW 0 0 1 0 0 0 1 
+current_state.DRAW_WAIT 0 1 0 0 0 0 1 
+current_state.SIMULATION 1 0 0 0 0 0 1 
