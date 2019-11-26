@@ -68,7 +68,6 @@ module main
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "black.mif";
 
-<<<<<<< HEAD
   reg [7:0]x_in;
   reg [7:0]y_in;
   wire [7:0]loadVal;
@@ -97,9 +96,6 @@ module main
   );
   
   simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y));
-=======
-  // module simulation(.clock(CLOCK_50), .load(load), .x_in(), .y_in(), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y));
->>>>>>> master
 
 endmodule
 
@@ -220,7 +216,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
   end
  
 endmodule
-<<<<<<< HEAD
 
 module control(
   go,
@@ -245,6 +240,8 @@ module control(
   output reg start;
   output reg load;
 
+  reg simulate = ~go;
+
   reg [3:0] current_state, next_state;
   
 
@@ -265,14 +262,14 @@ module control(
       LOAD_Y: next_state = set ? LOAD_Y : DRAW;
       DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
-       if (go == 1)
+       if (simulate == 1)
         next_state = SIMULATION;
        else if (set == 1)
         next_state = LOAD_X;
        else
         next_state = DRAW_WAIT;
       end
-      SIMULATION: next_state = stop ? DRAW_WAIT : SIMULATION;
+      SIMULATION: next_state = simulate ? SIMULATION : DRAW_WAIT;
     endcase
   end // state_table
 
@@ -308,5 +305,24 @@ module control(
   end // state_FFs
 
 endmodule
-=======
->>>>>>> master
+
+module rateDivider(d, clock, clock_slower, reset);
+  input [7:0]d; // use decimal
+  input clock;
+  input reset;
+  output clock_slower;
+  
+  reg [7:0]q; // use decimal
+
+  assign clock_slower = (q == 1'd0) ? 1 : 0;
+
+  always @(posedge clock)
+  begin
+    if (reset == 1'b0)
+      q <= 1'd0;
+    else if (q == 1'd0)
+      q <= d;
+    else
+      q <= q - 1'd1;
+  end
+endmodule
