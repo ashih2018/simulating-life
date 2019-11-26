@@ -134,11 +134,24 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
         // $display("changed8    = %0d",changed[7]);
         // $display("changed9    = %0d",changed[8]);
         // $display("changed10    = %0d",changed[9]);
-        // $display("changed count    = %0d",changed_count);		
-        cells[changed[changed_count-2]][changed[changed_count-1]] <= ~cells[changed[changed_count-2]][changed[changed_count-1]];
+
+        $display("changed count    = %0d",changed_count);
+        
+        // $display("changed1    = %0d",changed[0]);		
+        // $display("changed2    = %0d",changed[1]);
+        // $display("changed3    = %0d",changed[2]);		
+        // $display("changed4    = %0d",changed[3]);
+
+        // $display("changed_color1    = %0d",changed_color[0]);		
+        // $display("changed_color2    = %0d",changed_color[1]);
+        // $display("changed_color3    = %0d",changed_color[2]);		
+        $display("changed_colorthree    = %0d",changed_color[3]);	
+        $display("changed_colorct    = %0d",changed_color[changed_count]);	
+
+        cells[changed[2*changed_count-2]][changed[2*changed_count-1]] <= ~cells[changed[2*changed_count-2]][changed[2*changed_count-1]];
         out_x <= changed[2*changed_count-2];
         out_y <= changed[2*changed_count-1];
-        out_color <= changed_color[changed_count];
+        out_color <= changed_color[changed_count-1];
         changed_count <= changed_count - 1;
         $display("out x    = %0d",changed[2*changed_count-2]);		
         $display("out y    = %0d",changed[2*changed_count-1]);
@@ -156,6 +169,11 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       integer num_changed;
       changed_count <= 0;
       num_changed = 0;
+      $display("=======================================");
+      $display("changed7    = %0d",cells[2][1]);
+      $display("changed8    = %0d",cells[2][3]);
+      $display("changed9    = %0d",cells[1][2]);
+      $display("changed10    = %0d",cells[3][2]);
       for (row = 0; row < 4; row = row + 1) begin
         for (col = 0; col < 4; col = col + 1) begin
           neighbors = 0;
@@ -177,9 +195,9 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               // changed_count <= changed_count + 1;
               num_changed = num_changed + 1;
               draw <= 1;
-              // $display("row    = %0d",row);
-              // $display("col    = %0d",col);
-              // $display("living");
+              $display("row    = %0d",row);
+              $display("col    = %0d",col);
+              $display("living");
             end
           end
 
@@ -200,9 +218,9 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed_color[num_changed] = 3'b0;
               num_changed = num_changed + 1;
               draw <= 1;
-              // $display("row    = %0d",row);
-              // $display("col    = %0d",col);
-              // $display("dead 1");	
+              $display("row    = %0d",row);
+              $display("col    = %0d",col);
+              $display("dead 1");	
             end
             else if (neighbors >= 4) begin
               changed[2*num_changed] = row;
@@ -210,9 +228,9 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed_color[num_changed] = 3'b0;
               num_changed = num_changed + 1;
               draw <= 1;
-              // $display("row    = %0d",row);
-              // $display("col    = %0d",col);
-              // $display("dead 2");	
+              $display("row    = %0d",row);
+              $display("col    = %0d",col);
+              $display("dead 2");	
             end
           end
         end
