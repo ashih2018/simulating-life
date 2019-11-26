@@ -84,21 +84,15 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
   output reg [2:0] out_color;
 
   reg cells [0:3][0:3];
-  // reg [7:0] neighbors;
   reg draw;
   reg [7:0] changed [0:10];
   reg [2:0] changed_color [0:10];
   reg [7:0] changed_count;
 
-  reg [7:0]testingbit;
-  reg [7:0] foo;
-  reg test;
-
   always @(posedge clock)
   begin
-    $display("start    = %0d",start);
-    $display("draw    = %0d",draw);
     if (reset_n == 0) begin: RESET
+      // $display("1    = %0d",1);
       integer i;
       integer j;
       for (i = 0; i < 4; i = i + 1) begin
@@ -111,11 +105,10 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
     end
 
     else if (load == 1) begin: LOAD
-      $display("loading");	
       cells[x_in][y_in] = 1;
       out_x <= x_in;
       out_y <= y_in;
-      out_color <= 3'b0;
+      out_color <= 3'b111;
       draw <= 0;
     end
 
@@ -124,45 +117,13 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
         draw <= 0;
       end
       else if (changed_count > 0) begin
-        // $display("changed1    = %0d",changed[0]);		
-        // $display("changed2    = %0d",changed[1]);
-        // $display("changed3    = %0d",changed[2]);		
-        // $display("changed4    = %0d",changed[3]);
-        // $display("changed5    = %0d",changed[4]);
-        // $display("changed6    = %0d",changed[5]);
-        // $display("changed7    = %0d",changed[6]);
-        // $display("changed8    = %0d",changed[7]);
-        // $display("changed9    = %0d",changed[8]);
-        // $display("changed10    = %0d",changed[9]);
-
-        $display("changed count    = %0d",changed_count);
-        
-        // $display("changed1    = %0d",changed[0]);		
-        // $display("changed2    = %0d",changed[1]);
-        // $display("changed3    = %0d",changed[2]);		
-        // $display("changed4    = %0d",changed[3]);
-
-        // $display("changed_color1    = %0d",changed_color[0]);		
-        // $display("changed_color2    = %0d",changed_color[1]);
-        // $display("changed_color3    = %0d",changed_color[2]);		
-        $display("changed_colorthree    = %0d",changed_color[3]);	
-        $display("changed_colorct    = %0d",changed_color[changed_count]);	
-
         cells[changed[2*changed_count-2]][changed[2*changed_count-1]] <= ~cells[changed[2*changed_count-2]][changed[2*changed_count-1]];
         out_x <= changed[2*changed_count-2];
         out_y <= changed[2*changed_count-1];
         out_color <= changed_color[changed_count-1];
         changed_count <= changed_count - 1;
-        $display("out x    = %0d",changed[2*changed_count-2]);		
-        $display("out y    = %0d",changed[2*changed_count-1]);
-        $display("out color    = %0d",changed_color[changed_count]);		
-        // $display("changed    = %0d",changed_count);
       end
-      // $display("out x end    = %0d",out_x);
-      // $display("out y end    = %0d",out_y);
     end
-    // $display("out x end    = %0d",out_x);
-    // $display("out y end    = %0d",out_y);
 
     else if (start == 1 & draw == 0) begin: SIMULATE
       integer row;
@@ -173,11 +134,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       integer num_changed;
       changed_count <= 0;
       num_changed = 0;
-      $display("=======================================");
-      $display("changed7    = %0d",cells[2][1]);
-      $display("changed8    = %0d",cells[2][3]);
-      $display("changed9    = %0d",cells[1][2]);
-      $display("changed10    = %0d",cells[3][2]);
       for (row = 0; row < 4; row = row + 1) begin
         for (col = 0; col < 4; col = col + 1) begin
           neighbors = 0;
@@ -185,7 +141,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
                 if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
-                  // $display("1    = %0d",1);
                   if (cells[row+i][col+j] == 1)
                     neighbors = neighbors + 1;
                 end
@@ -196,12 +151,8 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed[2*num_changed] = row;
               changed[2*num_changed + 1] = col;
               changed_color[num_changed] = 3'b111;
-              // changed_count <= changed_count + 1;
               num_changed = num_changed + 1;
               draw <= 1;
-              $display("row    = %0d",row);
-              $display("col    = %0d",col);
-              $display("living");
             end
           end
 
@@ -222,9 +173,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed_color[num_changed] = 3'b0;
               num_changed = num_changed + 1;
               draw <= 1;
-              $display("row    = %0d",row);
-              $display("col    = %0d",col);
-              $display("dead 1");	
             end
             else if (neighbors >= 4) begin
               changed[2*num_changed] = row;
@@ -232,9 +180,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed_color[num_changed] = 3'b0;
               num_changed = num_changed + 1;
               draw <= 1;
-              $display("row    = %0d",row);
-              $display("col    = %0d",col);
-              $display("dead 2");	
             end
           end
         end
