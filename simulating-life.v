@@ -36,12 +36,19 @@ module main
 	// Create the colour, x, y and writeEn wires that are inputs to the controller.
 	wire [2:0] colour;
 	wire [7:0] x;
-	wire [6:0] y;
-	wire writeEn;
+	wire [7:0] y;
+	wire load;
 	wire loadY;
 	wire loadX;
-  wire load;
+  wire writeEn;
   wire start;
+  wire divided_clock;
+
+  assign writeEn = (load | start);
+
+  rateDivider d1(
+    .d(8'd50000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+  );
 
   // Create an Instance of a VGA controller - there can be only one!
 	// Define the number of colours as well as the initial background
@@ -95,7 +102,7 @@ module main
   .start(start)
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y));
+  simulation s1(.clock(divided_clock), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), out_color(colour));
 
 endmodule
 
