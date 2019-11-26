@@ -21,6 +21,8 @@ module control(
   output reg start;
   output reg load;
 
+  reg simulate = ~go;
+
   reg [3:0] current_state, next_state;
   
 
@@ -41,14 +43,14 @@ module control(
       LOAD_Y: next_state = set ? LOAD_Y : DRAW;
       DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
-       if (go == 1)
+       if (simulate == 1)
         next_state = SIMULATION;
        else if (set == 1)
         next_state = LOAD_X;
        else
         next_state = DRAW_WAIT;
       end
-      SIMULATION: next_state = stop ? DRAW_WAIT : SIMULATION;
+      SIMULATION: next_state = simulate ? SIMULATION : DRAW_WAIT;
     endcase
   end // state_table
 
