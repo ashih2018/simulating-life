@@ -128,20 +128,32 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
   always @(posedge clock)
   begin
     if (reset_n == 0) begin: RESET
+      // $display("1    = %0d",1);
       integer i;
       integer j;
-//		$display("1    = %0d", 4);
+      integer do_draw;
+      integer num_changed;
+      num_changed = 0;
+      do_draw = 0;
       for (i = 0; i < 4; i = i + 1) begin
         for (j = 0; j < 4; j = j + 1) begin
-          cells[i][j] <= 0;
+          if (cells[i][j] === 1'bx) begin
+            cells[i][j] = 0;
+          end
+          else if (cells[i][j] == 1) begin
+            changed[2*num_changed] = i;
+            changed[2*num_changed + 1] = j;
+            changed_color[num_changed] = 3'b0;
+            num_changed = num_changed + 1;
+            do_draw = 1;
+          end
         end
       end
-      draw <= 0;
-      changed_count <= 0;
+      draw <= do_draw;
+      changed_count <= num_changed;
     end
 
     else if (load == 1) begin: LOAD
-//	 $display("1    = %0d", 5);
       cells[x_in][y_in] = 1;
       out_x <= x_in;
       out_y <= y_in;
@@ -150,7 +162,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
     end
 
     else if (draw == 1) begin: DRAW
-//	 $display("1    = %0d", 6);
       if (changed_count <= 0) begin
         draw <= 0;
       end
