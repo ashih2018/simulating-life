@@ -45,12 +45,12 @@ module main
 //	wire new_start;
    wire divided_clock;
 	
-  assign writeEn = (load | start);
+//  assign writeEn = ( | start);
 //  assign new_start = (start) ? divided_clock : 0;
 
-  rateDivider d1(
-    .d(8'd500000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
-  );
+//  rateDivider d1(
+//    .d(8'd500000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+//  );
 
   // Create an Instance of a VGA controller - there can be only one!
 	// Define the number of colours as well as the initial background
@@ -92,16 +92,17 @@ module main
   end
   
   control c1(
-  .go(KEY[0]),
+  .go(KEY[2]),
   .reset(reset_n),
-  .set(KEY[2]),
+  .set(SW[8]),
   .clock(CLOCK_50),
   .loadVal(SW[7:0]),
   .stop(KEY[3]),
   .ldX(loadX),
   .ldY(loadY),
   .load(load),
-  .start(start)
+  .start(start),
+  .writeEn(writeEn)
   );
   
   simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
@@ -256,7 +257,8 @@ module control(
   ldX,
   ldY,
   load,
-  start
+  start,
+  writeEn
   );
   input go;
   input reset;
@@ -267,6 +269,7 @@ module control(
   output reg ldX;
   output reg ldY;
   output reg start;
+  output reg writeEn;
   output reg load;
 
   reg [3:0] current_state, next_state;
@@ -284,10 +287,10 @@ module control(
   begin: state_table
     case (current_state)
       BASE: next_state = ~set ? LOAD_X : BASE;
-      LOAD_X: next_state = ~set ? LOAD_X : LOAD_X_WAIT;
+      LOAD_X: next_state = set ? LOAD_X_WAIT : LOAD_X;
       LOAD_X_WAIT: next_state = ~set ? LOAD_Y : LOAD_X_WAIT;
-      LOAD_Y: next_state = ~set ? LOAD_Y : DRAW;
-      DRAW: next_state = set ? DRAW_WAIT : DRAW;
+      LOAD_Y: next_state = set ? DRAW : LOAD_Y;
+      DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
        if (go == 0) begin
 //		  $display("1    = %0d",1);
@@ -307,17 +310,25 @@ module control(
   end // state_table
 
   always @(*)
-  begin: outut_logic
+  begin: output_logic
     // default
     start = 0;
     ldX = 0;
     ldY = 0;
     load = 0;
+	 writeEn = 0;
     case (current_state)
       LOAD_X: ldX = 1;
       LOAD_Y: ldY = 1;
-      DRAW: load = 1;
-      SIMULATION: start = 1;
+      DRAW: begin
+			load = 1;
+			writeEn = 1;
+		end
+		DRAW_WAIT: writeEn = 1;
+      SIMULATION: begin
+			start = 1;
+			writeEn = 1;
+		end
       default: begin
         start = 0;
         ldX = 0;
