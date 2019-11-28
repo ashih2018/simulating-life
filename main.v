@@ -129,13 +129,26 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       // $display("1    = %0d",1);
       integer i;
       integer j;
+      integer do_draw;
+      integer num_changed;
+      num_changed = 0;
+      do_draw = 0;
       for (i = 0; i < 4; i = i + 1) begin
         for (j = 0; j < 4; j = j + 1) begin
-          cells[i][j] <= 0;
+          if (cells[i][j] === 1'bx) begin
+            cells[i][j] = 0;
+          end
+          else if (cells[i][j] == 1) begin
+            changed[2*num_changed] = i;
+            changed[2*num_changed + 1] = j;
+            changed_color[num_changed] = 3'b0;
+            num_changed = num_changed + 1;
+            do_draw = 1;
+          end
         end
       end
-      draw <= 0;
-      changed_count <= 0;
+      draw <= do_draw;
+      changed_count <= num_changed;
     end
 
     else if (load == 1) begin: LOAD
