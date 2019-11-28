@@ -42,14 +42,12 @@ module main
 	wire loadX;
    wire writeEn;
    wire start;
-//	wire new_start;
    wire divided_clock;
-	
+
   assign writeEn = (load | start);
-//  assign new_start = (start) ? divided_clock : 0;
 
   rateDivider d1(
-    .d(8'd500000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+    .d(8'd50000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
   );
 
   // Create an Instance of a VGA controller - there can be only one!
@@ -104,7 +102,7 @@ module main
   .start(start)
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
+  simulation s1(.clock(divided_clock), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
 
 endmodule
 
@@ -128,9 +126,9 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
   always @(posedge clock)
   begin
     if (reset_n == 0) begin: RESET
+      // $display("1    = %0d",1);
       integer i;
       integer j;
-//		$display("1    = %0d", 4);
       for (i = 0; i < 4; i = i + 1) begin
         for (j = 0; j < 4; j = j + 1) begin
           cells[i][j] <= 0;
@@ -141,7 +139,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
     end
 
     else if (load == 1) begin: LOAD
-//	 $display("1    = %0d", 5);
       cells[x_in][y_in] = 1;
       out_x <= x_in;
       out_y <= y_in;
@@ -150,7 +147,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
     end
 
     else if (draw == 1) begin: DRAW
-//	 $display("1    = %0d", 6);
       if (changed_count <= 0) begin
         draw <= 0;
       end
@@ -170,8 +166,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       integer j;
       integer neighbors;
       integer num_changed;
-//		$display("1    = %0d", 7);
-//      changed_count <= 0;
+      changed_count <= 0;
       num_changed = 0;
       for (row = 0; row < 4; row = row + 1) begin
         for (col = 0; col < 4; col = col + 1) begin
@@ -182,7 +177,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
                 if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1)
                     neighbors = neighbors + 1;
-						  
                 end
               end
             end
@@ -192,7 +186,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed[2*num_changed + 1] = col;
               changed_color[num_changed] = 3'b111;
               num_changed = num_changed + 1;
-//				  $display("1    = %0d", 8);
               draw <= 1;
             end
           end
@@ -202,8 +195,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               for (j = -1; j <= 1; j = j + 1) begin
                 if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1) begin
-//							$display("1    = %0d", row);
-//						  $display("1    = %0d", col);
                     neighbors = neighbors + 1;
                   end
                 end
@@ -215,7 +206,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed[2*num_changed + 1] = col;
               changed_color[num_changed] = 3'b0;
               num_changed = num_changed + 1;
-//				  $display("1    = %0d", 9);
               draw <= 1;
             end
             else if (neighbors >= 4) begin
@@ -223,7 +213,6 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
               changed[2*num_changed + 1] = col;
               changed_color[num_changed] = 3'b0;
               num_changed = num_changed + 1;
-//				  $display("1    = %0d", 10);
               draw <= 1;
             end
           end
@@ -258,6 +247,10 @@ module control(
   output reg start;
   output reg load;
 
+  wire simulate;
+  
+  assign simulate = ~go;
+
   reg [3:0] current_state, next_state;
   
 
@@ -272,26 +265,20 @@ module control(
   always @(*)
   begin: state_table
     case (current_state)
-      BASE: next_state = ~set ? LOAD_X : BASE;
-      LOAD_X: next_state = ~set ? LOAD_X : LOAD_X_WAIT;
-      LOAD_X_WAIT: next_state = ~set ? LOAD_Y : LOAD_X_WAIT;
-      LOAD_Y: next_state = ~set ? LOAD_Y : DRAW;
-      DRAW: next_state = set ? DRAW_WAIT : DRAW;
+      BASE: next_state = set ? LOAD_X : BASE;
+      LOAD_X: next_state = set ? LOAD_X : LOAD_X_WAIT;
+      LOAD_X_WAIT: next_state = set ? LOAD_Y : LOAD_X_WAIT;
+      LOAD_Y: next_state = set ? LOAD_Y : DRAW;
+      DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
-       if (go == 0) begin
-//		  $display("1    = %0d",1);
-		  next_state = SIMULATION;
-		 end  
-       else if (set == 0) begin
+       if (simulate == 1)
+        next_state = SIMULATION;
+       else if (set == 1)
         next_state = LOAD_X;
-//		  $display("1    = %0d",2);
-		  end
-       else begin
+       else
         next_state = DRAW_WAIT;
-//		  $display("1    = %0d",3);
-		  end
       end
-      SIMULATION: next_state = ~go ? SIMULATION : DRAW_WAIT;
+      SIMULATION: next_state = simulate ? SIMULATION : DRAW_WAIT;
     endcase
   end // state_table
 
@@ -303,6 +290,7 @@ module control(
     ldY = 0;
     load = 0;
     case (current_state)
+      BASE: start = 0;
       LOAD_X: ldX = 1;
       LOAD_Y: ldY = 1;
       DRAW: load = 1;
@@ -339,7 +327,6 @@ module rateDivider(d, clock, clock_slower, reset);
 
   always @(posedge clock)
   begin
-	 $display("1    = %0d",q);
     if (reset == 1'b0)
       q <= 1'd0;
     else if (q == 1'd0)
