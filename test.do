@@ -1,5 +1,5 @@
 vlib work
-vlog -timescale 1ns/1ns simulating-life.v
+vlog -timescale 1ns/1ns main.v
 vsim simulation
 # Log all signals and add some signals to waveform window.
 log {/*}
@@ -18,6 +18,6 @@ force {x_in[7:0]} 10#1 10, 10#2 20, 10#3 30
 
 force {y_in[7:0]} 10#2 0
 
-force {reset_n} 0 0, 1 10
+force {reset_n} 0 0, 1 10, 0 150, 1 160
 
 run 300 ns
