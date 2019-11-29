@@ -56,26 +56,26 @@ module main
 	// Define the number of colours as well as the initial background
 	// image file (.MIF) for the controller.
 
-	vga_adapter VGA(
-			.resetn(reset_n),
-			.clock(CLOCK_50),
-			.colour(colour),
-			.x(x),
-			.y(y),
-			.plot(writeEn),
-			/* Signals for the DAC to drive the monitor. */
-			.VGA_R(VGA_R),
-			.VGA_G(VGA_G),
-			.VGA_B(VGA_B),
-			.VGA_HS(VGA_HS),
-			.VGA_VS(VGA_VS),
-			.VGA_BLANK(VGA_BLANK_N),
-			.VGA_SYNC(VGA_SYNC_N),
-			.VGA_CLK(VGA_CLK));
-		defparam VGA.RESOLUTION = "160x120";
-		defparam VGA.MONOCHROME = "FALSE";
-		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
-		defparam VGA.BACKGROUND_IMAGE = "black.mif";
+	// vga_adapter VGA(
+	// 		.resetn(reset_n),
+	// 		.clock(CLOCK_50),
+	// 		.colour(colour),
+	// 		.x(x),
+	// 		.y(y),
+	// 		.plot(writeEn),
+	// 		/* Signals for the DAC to drive the monitor. */
+	// 		.VGA_R(VGA_R),
+	// 		.VGA_G(VGA_G),
+	// 		.VGA_B(VGA_B),
+	// 		.VGA_HS(VGA_HS),
+	// 		.VGA_VS(VGA_VS),
+	// 		.VGA_BLANK(VGA_BLANK_N),
+	// 		.VGA_SYNC(VGA_SYNC_N),
+	// 		.VGA_CLK(VGA_CLK));
+	// 	defparam VGA.RESOLUTION = "160x120";
+	// 	defparam VGA.MONOCHROME = "FALSE";
+	// 	defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
+	// 	defparam VGA.BACKGROUND_IMAGE = "black.mif";
 
   reg [7:0]x_in;
   reg [7:0]y_in;
@@ -94,7 +94,7 @@ module main
   control c1(
   .go(KEY[2]),
   .reset(reset_n),
-  .set(SW[8]),
+  .set(KEY[0]),
   .clock(CLOCK_50),
   .loadVal(SW[7:0]),
   .stop(KEY[3]),
@@ -293,16 +293,16 @@ module control(
       DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
        if (go == 0) begin
-//		  $display("1    = %0d",1);
+		  $display("1    = %0d",1);
 		  next_state = SIMULATION;
 		 end  
        else if (set == 0) begin
         next_state = LOAD_X;
-//		  $display("1    = %0d",2);
+		  $display("1    = %0d",2);
 		  end
        else begin
         next_state = DRAW_WAIT;
-//		  $display("1    = %0d",3);
+		  $display("1    = %0d",3);
 		  end
       end
       SIMULATION: next_state = ~go ? SIMULATION : DRAW_WAIT;
@@ -318,16 +318,23 @@ module control(
     load = 0;
 	 writeEn = 0;
     case (current_state)
-      LOAD_X: ldX = 1;
-      LOAD_Y: ldY = 1;
+      LOAD_X: begin
+        ldX = 1;
+      end
+      LOAD_Y: ldY = begin
+        ldY = 1;
+        $display("1    = %0d",4);
+      end
       DRAW: begin
 			load = 1;
 			writeEn = 1;
+        $display("1    = %0d",5);
 		end
 		DRAW_WAIT: writeEn = 1;
-      SIMULATION: begin
+    SIMULATION: begin
 			start = 1;
 			writeEn = 1;
+      $display("1    = %0d",6);
 		end
       default: begin
         start = 0;
