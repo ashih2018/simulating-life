@@ -18,6 +18,6 @@ force {x_in[7:0]} 10#1 10, 10#2 20, 10#3 30
 
 force {y_in[7:0]} 10#2 0
 
-force {reset_n} 0 0, 1 10, 0 150, 1 160
+force {reset_n} 0 0, 1 10
 
 run 300 ns

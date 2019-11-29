@@ -179,7 +179,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       integer j;
       integer neighbors;
       integer num_changed;
-      changed_count <= 0;
+      // changed_count <= 0;
       num_changed = 0;
       for (row = 0; row < 4; row = row + 1) begin
         for (col = 0; col < 4; col = col + 1) begin
