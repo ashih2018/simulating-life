@@ -45,12 +45,11 @@ module main
 //	wire new_start;
    wire divided_clock;
 	
-//  assign writeEn = ( | start);
-//  assign new_start = (start) ? divided_clock : 0;
+  assign divided_start = (start) ? divided_clock : 0;
 
-//  rateDivider d1(
-//    .d(8'd500000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
-//  );
+  rateDivider d1(
+    .d(26'b10111110101111000010000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+  );
 
   // Create an Instance of a VGA controller - there can be only one!
 	// Define the number of colours as well as the initial background
@@ -105,7 +104,7 @@ module main
   .writeEn(writeEn)
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
+  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
 
 endmodule
 
@@ -302,7 +301,7 @@ module control(
         next_state = DRAW_WAIT;
 		  end
       end
-      SIMULATION: next_state = ~go ? SIMULATION : DRAW_WAIT;
+      SIMULATION: next_state = ~stop ? DRAW_WAIT: SIMULATION;
     endcase
   end // state_table
 
@@ -359,23 +358,23 @@ module control(
 endmodule
 
 module rateDivider(d, clock, clock_slower, reset);
-  input [7:0]d; // use decimal
+  input [25:0] d;
   input clock;
   input reset;
   output clock_slower;
   
-  reg [7:0]q; // use decimal
+  reg [25:0]q; // use decimal
 
-  assign clock_slower = (q == 1'd0) ? 1 : 0;
+  assign clock_slower = (q == 1'b0) ? 1 : 0;
 
   always @(posedge clock)
   begin
 	 $display("1    = %0d",q);
     if (reset == 1'b0)
-      q <= 1'd0;
+      q <= 1'b0;
     else if (q == 1'd0)
       q <= d;
     else
-      q <= q - 1'd1;
+      q <= q - 1'b1;
   end
 endmodule
