@@ -17,6 +17,8 @@ module main
     PS2_DAT,
 	);
 
+  input PS2_DAT;
+  input PS2_CLK;
 	input			CLOCK_50;				//	50 MHz
 	input   [9:0]   SW;
 	input   [3:0]   KEY;
@@ -42,16 +44,19 @@ module main
 	wire load;
 	wire loadY;
 	wire loadX;
-   wire writeEn;
-   wire start;
+  wire writeEn;
+  wire start;
 //	wire new_start;
-   wire divided_clock;
+  wire divided_clock;
+  wire [7:0] rate;
 	
   assign writeEn = (load | start);
 //  assign new_start = (start) ? divided_clock : 0;
 
+
+
   rateDivider d1(
-    .d(8'd500000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+    .d(rate), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
   );
 
   // Create an Instance of a VGA controller - there can be only one!
@@ -82,6 +87,9 @@ module main
   reg [7:0]x_in;
   reg [7:0]y_in;
   wire [7:0]loadVal;
+  wire mouse;
+  wire [7:0] mouseX;
+  wire [7:0] mouseY;
 
   assign loadVal = SW[7:0];
 
@@ -91,6 +99,10 @@ module main
       x_in = loadVal;
     if (loadY == 1'b1)
       y_in = loadVal;
+    if (mouse = 1'b1) begin
+      x_in = mouseX;
+      y_in = mouseY;
+    end
   end
   
   control c1(
@@ -101,9 +113,15 @@ module main
   .loadVal(SW[7:0]),
   .stop(KEY[3]),
   .ldX(loadX),
+  .PS2_CLK(PS2_CLK),
+  .PS2_DAT(PS2_DAT),
   .ldY(loadY),
   .load(load),
-  .start(start)
+  .start(start),
+  .mouse(mouse),
+  .mouseX(mouseX),
+  .mouseY(mouseY),
+  .rate(rate)
   );
   
   simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
@@ -126,6 +144,13 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
   reg [7:0] changed [0:10];
   reg [2:0] changed_color [0:10];
   reg [7:0] changed_count;
+  wire [7:0] x_position;
+  wire [7:0] y_position;
+  wire left_click;
+  wire right_click;
+
+  // mouse_tracker mouse(.clock(clock), .reset(reset_n), .enable_tracking(1'b1), .PS2_CLK(PS2_CLK), .PS2_DAT(PS2_DAT),
+  //                     .x_pos(x_position), .y_pos(y_position), .left_click(left_click), .right_click(right_click), .count(count));
 
   always @(posedge clock)
   begin
@@ -137,6 +162,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       integer num_changed;
       num_changed = 0;
       do_draw = 0;
+
       for (i = 0; i < 4; i = i + 1) begin
         for (j = 0; j < 4; j = j + 1) begin
           if (cells[i][j] === 1'bx) begin
@@ -162,6 +188,23 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       out_color <= 3'b111;
       draw <= 0;
     end
+
+    // else if (left_click == 1) begin: MOUSE
+    //   if (cells[x_position][y_position] == 0) begin
+    //     cells[x_position][y_position] = 1;
+    //     out_x <= x_position;
+    //     out_y <= y_position;
+    //     out_color <= 3'b111;
+    //     draw <= 0;
+    //   end
+    //   else begin
+    //     cells[x_position][y_position] = 0;
+    //     out_x <= x_position;
+    //     out_y <= y_position;
+    //     out_color <= 3'b000;
+    //     draw <= 0;
+    //   end
+    // end
 
     else if (draw == 1) begin: DRAW
       if (changed_count <= 0) begin
@@ -258,7 +301,10 @@ module control(
   PS2_CLK,
   PS2_DAT,
   load,
-  start
+  start,
+  mouseX,
+  mouseY,
+  rate
   );
   input go;
   input reset;
@@ -270,10 +316,20 @@ module control(
   output reg ldY;
   output reg start;
   output reg load;
+  output mouseX;
+  output mouseY;
+  output rate;
+  
+  reg set_rate;
 
   reg [3:0] current_state, next_state;
   wire[7:0]	ps2_key_data;
   wire ps2_key_pressed;  
+
+  wire [7:0] x_position;
+  wire [7:0] y_position;
+  wire left_click;
+  wire right_click;
 
   PS2_Controller PS2 (
 	// Inputs
@@ -286,6 +342,9 @@ module control(
 	.received_data		(ps2_key_data),
 	.received_data_en	(ps2_key_pressed)
   );
+
+  mouse_tracker mouse(.clock(clock), .reset(reset_n), .enable_tracking(1'b1), .PS2_CLK(PS2_CLK), .PS2_DAT(PS2_DAT),
+                      .x_pos(x_position), .y_pos(y_position), .left_click(left_click), .right_click(right_click), .count(count));
 
   localparam BASE = 4'd0,
              LOAD_X = 4'd1,
@@ -304,17 +363,25 @@ module control(
       LOAD_Y: next_state = ~set ? LOAD_Y : DRAW;
       DRAW: next_state = set ? DRAW_WAIT : DRAW;
       DRAW_WAIT: begin
-       if (go == 0) begin
-//		  $display("1    = %0d",1);
-		  next_state = SIMULATION;
-		 end  
-       else if (set == 0) begin
+      if (go == 0) begin
+        next_state = SIMULATION;
+      end  
+      else if (set == 0) begin
         next_state = LOAD_X;
-//		  $display("1    = %0d",2);
 		  end
-       else begin
+      else if (left_click == 1) begin
+        mouseX = x_position;
+        mouseY = y_position;
+        next_state = BASE;
+      end
+      else if (right_click == 1) begin
+        if (set_rate == 0)
+          rate = 8'd500000;
+        else
+          rate = 8'd250000;
+      end
+      else begin
         next_state = DRAW_WAIT;
-//		  $display("1    = %0d",3);
 		  end
       end
       SIMULATION: next_state = ~go ? SIMULATION : DRAW_WAIT;
@@ -347,6 +414,7 @@ module control(
   begin: state_FF
     if (!reset)
       current_state <= BASE;
+      set_rate <= 0;
     else
       current_state <= next_state;
   end // state_FFs
