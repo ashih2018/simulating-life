@@ -45,11 +45,10 @@ module main
 //	wire new_start;
    wire divided_clock;
 	
-  assign writeEn = (load | start);
-//  assign new_start = (start) ? divided_clock : 0;
+  assign divided_start = (start) ? divided_clock : 0;
 
   rateDivider d1(
-    .d(8'd500000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+    .d(26'b10111110101111000010000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
   );
 
   // Create an Instance of a VGA controller - there can be only one!
@@ -92,19 +91,20 @@ module main
   end
   
   control c1(
-  .go(KEY[0]),
+  .go(KEY[2]),
   .reset(reset_n),
-  .set(KEY[2]),
+  .set(KEY[0]),
   .clock(CLOCK_50),
   .loadVal(SW[7:0]),
   .stop(KEY[3]),
   .ldX(loadX),
   .ldY(loadY),
   .load(load),
-  .start(start)
+  .start(start),
+  .writeEn(writeEn)
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
+  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
 
 endmodule
 
@@ -181,6 +181,8 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       integer j;
       integer neighbors;
       integer num_changed;
+//		$display("1    = %0d", 7);
+//      changed_count <= 0;
       num_changed = 0;
       for (row = 0; row < 4; row = row + 1) begin
         for (col = 0; col < 4; col = col + 1) begin
@@ -254,7 +256,8 @@ module control(
   ldX,
   ldY,
   load,
-  start
+  start,
+  writeEn
   );
   input go;
   input reset;
@@ -265,6 +268,7 @@ module control(
   output reg ldX;
   output reg ldY;
   output reg start;
+  output reg writeEn;
   output reg load;
 
   reg [3:0] current_state, next_state;
@@ -282,40 +286,57 @@ module control(
   begin: state_table
     case (current_state)
       BASE: next_state = ~set ? LOAD_X : BASE;
-      LOAD_X: next_state = ~set ? LOAD_X : LOAD_X_WAIT;
+      LOAD_X: next_state = set ? LOAD_X_WAIT : LOAD_X;
       LOAD_X_WAIT: next_state = ~set ? LOAD_Y : LOAD_X_WAIT;
-      LOAD_Y: next_state = ~set ? LOAD_Y : DRAW;
-      DRAW: next_state = set ? DRAW_WAIT : DRAW;
+      LOAD_Y: next_state = set ? DRAW : LOAD_Y;
+      DRAW: next_state = DRAW_WAIT;
       DRAW_WAIT: begin
-       if (go == 0) begin
-//		  $display("1    = %0d",1);
+       if (go == 1'b0) begin
 		  next_state = SIMULATION;
 		 end  
-       else if (set == 0) begin
+       else if (set == 1'b0) begin
         next_state = LOAD_X;
-//		  $display("1    = %0d",2);
 		  end
        else begin
         next_state = DRAW_WAIT;
-//		  $display("1    = %0d",3);
 		  end
       end
-      SIMULATION: next_state = ~go ? SIMULATION : DRAW_WAIT;
+      SIMULATION: next_state = ~stop ? DRAW_WAIT: SIMULATION;
     endcase
   end // state_table
 
   always @(*)
-  begin: outut_logic
+  begin: output_logic
     // default
     start = 0;
     ldX = 0;
     ldY = 0;
     load = 0;
+	 writeEn = 0;
     case (current_state)
-      LOAD_X: ldX = 1;
-      LOAD_Y: ldY = 1;
-      DRAW: load = 1;
-      SIMULATION: start = 1;
+      BASE: $display("1    = %0d",2);
+      LOAD_X: begin
+        ldX = 1;
+        $display("1    = %0d",3);
+      end
+      LOAD_Y: begin
+        ldY = 1;
+        $display("1    = %0d",4);
+      end
+      DRAW: begin
+			load = 1;
+			writeEn = 1;
+        $display("1    = %0d",5);
+		end
+		DRAW_WAIT: begin
+      writeEn = 1;
+      $display("1    = %0d",6);
+    end
+    SIMULATION: begin
+			start = 1;
+			writeEn = 1;
+      $display("1    = %0d",7);
+		end
       default: begin
         start = 0;
         ldX = 0;
@@ -337,23 +358,23 @@ module control(
 endmodule
 
 module rateDivider(d, clock, clock_slower, reset);
-  input [7:0]d; // use decimal
+  input [25:0] d;
   input clock;
   input reset;
   output clock_slower;
   
-  reg [7:0]q; // use decimal
+  reg [25:0]q; // use decimal
 
-  assign clock_slower = (q == 1'd0) ? 1 : 0;
+  assign clock_slower = (q == 1'b0) ? 1 : 0;
 
   always @(posedge clock)
   begin
 	 $display("1    = %0d",q);
     if (reset == 1'b0)
-      q <= 1'd0;
+      q <= 1'b0;
     else if (q == 1'd0)
       q <= d;
     else
-      q <= q - 1'd1;
+      q <= q - 1'b1;
   end
 endmodule
