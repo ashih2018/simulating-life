@@ -13,6 +13,8 @@ module main
 		VGA_R,   						//	VGA Red[9:0]
 		VGA_G,	 						//	VGA Green[9:0]
 		VGA_B   						//	VGA Blue[9:0]
+    PS2_CLK,
+    PS2_DAT,
 	);
 
 	input			CLOCK_50;				//	50 MHz
@@ -253,6 +255,8 @@ module control(
   stop,
   ldX,
   ldY,
+  PS2_CLK,
+  PS2_DAT,
   load,
   start
   );
@@ -268,7 +272,20 @@ module control(
   output reg load;
 
   reg [3:0] current_state, next_state;
-  
+  wire[7:0]	ps2_key_data;
+  wire ps2_key_pressed;  
+
+  PS2_Controller PS2 (
+	// Inputs
+	.CLOCK_50				(clock),
+	.reset				(~reset),
+	// Bidirectionals
+	.PS2_CLK			(PS2_CLK),
+ 	.PS2_DAT			(PS2_DAT),
+	// Outputs
+	.received_data		(ps2_key_data),
+	.received_data_en	(ps2_key_pressed)
+  );
 
   localparam BASE = 4'd0,
              LOAD_X = 4'd1,
