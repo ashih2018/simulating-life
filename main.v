@@ -6,7 +6,7 @@ module main
         SW,
     // Mouse/Keyboard
         PS2_CLK,
-        PS2_DAT
+        PS2_DAT,
 		// The ports below are for the VGA output.  Do not change.
 		VGA_CLK,   						//	VGA Clock
 		VGA_HS,							//	VGA H_SYNC
@@ -33,8 +33,8 @@ module main
 	output	[9:0]	VGA_G;	 				//	VGA Green[9:0]
 	output	[9:0]	VGA_B;   				//	VGA Blue[9:0]
 
-  inout PS2_CLK,
-	inout PS2_DAT,
+  inout PS2_CLK;
+	inout PS2_DAT;
 	
 	wire reset_n;
 	assign reset_n = KEY[1];

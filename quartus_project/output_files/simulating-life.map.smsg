@@ -1,1 +1,1 @@
-Warning (10268): Verilog HDL information at main.v(126): always construct contains both blocking and non-blocking assignments File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 126
+Warning (10268): Verilog HDL information at main.v(148): always construct contains both blocking and non-blocking assignments File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 148

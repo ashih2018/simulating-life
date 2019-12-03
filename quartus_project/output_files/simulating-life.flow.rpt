@@ -1,5 +1,5 @@
 Flow report for simulating-life
-Tue Nov 26 17:24:02 2019
+Tue Dec  3 14:03:30 2019
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -40,16 +40,16 @@ refer to the applicable agreement for further details.
 +-------------------------------------------------------------------------------+
 ; Flow Summary                                                                  ;
 +---------------------------------+---------------------------------------------+
-; Flow Status                     ; Successful - Tue Nov 26 17:24:02 2019       ;
+; Flow Status                     ; Successful - Tue Dec  3 14:03:30 2019       ;
 ; Quartus Prime Version           ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
 ; Revision Name                   ; simulating-life                             ;
 ; Top-level Entity Name           ; main                                        ;
 ; Family                          ; Cyclone V                                   ;
 ; Device                          ; 5CSEMA5F31C6                                ;
 ; Timing Models                   ; Final                                       ;
-; Logic utilization (in ALMs)     ; 580 / 32,070 ( 2 % )                        ;
-; Total registers                 ; 127                                         ;
-; Total pins                      ; 50 / 457 ( 11 % )                           ;
+; Logic utilization (in ALMs)     ; 812 / 32,070 ( 3 % )                        ;
+; Total registers                 ; 237                                         ;
+; Total pins                      ; 52 / 457 ( 11 % )                           ;
 ; Total virtual pins              ; 0                                           ;
 ; Total block memory bits         ; 57,600 / 4,065,280 ( 1 % )                  ;
 ; Total DSP Blocks                ; 0 / 87 ( 0 % )                              ;
@@ -67,7 +67,7 @@ refer to the applicable agreement for further details.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 11/26/2019 17:21:07 ;
+; Start date & time ; 12/03/2019 13:59:33 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; simulating-life     ;
 +-------------------+---------------------+
@@ -78,7 +78,7 @@ refer to the applicable agreement for further details.
 +-------------------------------------+----------------------------------------+-----------------+-------------+----------------+
 ; Assignment Name                     ; Value                                  ; Default Value   ; Entity Name ; Section Id     ;
 +-------------------------------------+----------------------------------------+-----------------+-------------+----------------+
-; COMPILER_SIGNATURE_ID               ; 84440840840757.157480686708604         ; --              ; --          ; --             ;
+; COMPILER_SIGNATURE_ID               ; 161335618050.157539957332271           ; --              ; --          ; --             ;
 ; EDA_OUTPUT_DATA_FORMAT              ; Verilog Hdl                            ; --              ; --          ; eda_simulation ;
 ; EDA_SIMULATION_TOOL                 ; ModelSim-Altera (Verilog)              ; <None>          ; --          ; --             ;
 ; EDA_TIME_SCALE                      ; 1 ps                                   ; --              ; --          ; eda_simulation ;
@@ -99,12 +99,12 @@ refer to the applicable agreement for further details.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:00:41     ; 1.0                     ; 1077 MB             ; 00:00:45                           ;
-; Fitter               ; 00:01:09     ; 1.1                     ; 2530 MB             ; 00:02:03                           ;
-; Assembler            ; 00:00:10     ; 1.0                     ; 973 MB              ; 00:00:07                           ;
-; Timing Analyzer      ; 00:00:14     ; 1.3                     ; 1267 MB             ; 00:00:11                           ;
-; EDA Netlist Writer   ; 00:00:02     ; 1.0                     ; 1263 MB             ; 00:00:02                           ;
-; Total                ; 00:02:16     ; --                      ; --                  ; 00:03:08                           ;
+; Analysis & Synthesis ; 00:00:57     ; 1.0                     ; 1161 MB             ; 00:01:27                           ;
+; Fitter               ; 00:01:59     ; 1.2                     ; 3485 MB             ; 00:09:37                           ;
+; Assembler            ; 00:00:13     ; 1.0                     ; 983 MB              ; 00:00:12                           ;
+; Timing Analyzer      ; 00:00:20     ; 1.8                     ; 1433 MB             ; 00:00:23                           ;
+; EDA Netlist Writer   ; 00:00:08     ; 1.0                     ; 1269 MB             ; 00:00:04                           ;
+; Total                ; 00:03:37     ; --                      ; --                  ; 00:11:43                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
@@ -113,11 +113,11 @@ refer to the applicable agreement for further details.
 +----------------------+------------------+----------------+------------+----------------+
 ; Module Name          ; Machine Hostname ; OS Name        ; OS Version ; Processor type ;
 +----------------------+------------------+----------------+------------+----------------+
-; Analysis & Synthesis ; b2210-02         ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
-; Fitter               ; b2210-02         ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
-; Assembler            ; b2210-02         ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
-; Timing Analyzer      ; b2210-02         ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
-; EDA Netlist Writer   ; b2210-02         ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
+; Analysis & Synthesis ; wolf             ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
+; Fitter               ; wolf             ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
+; Assembler            ; wolf             ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
+; Timing Analyzer      ; wolf             ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
+; EDA Netlist Writer   ; wolf             ; Ubuntu 18.04.3 ; 18         ; x86_64         ;
 +----------------------+------------------+----------------+------------+----------------+
 
 
