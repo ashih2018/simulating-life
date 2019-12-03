@@ -1,5 +1,5 @@
 Analysis & Synthesis report for simulating-life
-Tue Nov 26 17:21:53 2019
+Tue Dec  3 14:00:32 2019
 Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 
 
@@ -15,25 +15,34 @@ Quartus Prime Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
   7. Analysis & Synthesis Resource Utilization by Entity
   8. Analysis & Synthesis RAM Summary
   9. State Machine - |main|control:c1|current_state
- 10. User-Specified and Inferred Latches
- 11. Registers Removed During Synthesis
- 12. General Register Statistics
- 13. Multiplexer Restructuring Statistics (Restructuring Performed)
- 14. Source assignments for vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated
- 15. Parameter Settings for User Entity Instance: vga_adapter:VGA
- 16. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_address_translator:user_input_translator
- 17. Parameter Settings for User Entity Instance: vga_adapter:VGA|altsyncram:VideoMemory
- 18. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component
- 19. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller
- 20. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller|vga_address_translator:controller_translator
- 21. altsyncram Parameter Settings by Entity Instance
- 22. altpll Parameter Settings by Entity Instance
- 23. Port Connectivity Checks: "vga_adapter:VGA"
- 24. Port Connectivity Checks: "rateDivider:d1"
- 25. Post-Synthesis Netlist Statistics for Top Partition
- 26. Elapsed Time Per Partition
- 27. Analysis & Synthesis Messages
- 28. Analysis & Synthesis Suppressed Messages
+ 10. State Machine - |main|keyboard_tracker:k1|curr_state
+ 11. State Machine - |main|keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver
+ 12. State Machine - |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter
+ 13. State Machine - |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|s_ps2_receiver
+ 14. User-Specified and Inferred Latches
+ 15. Registers Removed During Synthesis
+ 16. Removed Registers Triggering Further Register Optimizations
+ 17. General Register Statistics
+ 18. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 19. Source assignments for vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated
+ 20. Parameter Settings for User Entity Instance: keyboard_tracker:k1
+ 21. Parameter Settings for User Entity Instance: keyboard_tracker:k1|PS2_Controller:core_driver
+ 22. Parameter Settings for User Entity Instance: keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out
+ 23. Parameter Settings for User Entity Instance: vga_adapter:VGA
+ 24. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_address_translator:user_input_translator
+ 25. Parameter Settings for User Entity Instance: vga_adapter:VGA|altsyncram:VideoMemory
+ 26. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component
+ 27. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller
+ 28. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller|vga_address_translator:controller_translator
+ 29. altsyncram Parameter Settings by Entity Instance
+ 30. altpll Parameter Settings by Entity Instance
+ 31. Port Connectivity Checks: "vga_adapter:VGA"
+ 32. Port Connectivity Checks: "keyboard_tracker:k1|PS2_Controller:core_driver"
+ 33. Port Connectivity Checks: "rateDivider:d1"
+ 34. Post-Synthesis Netlist Statistics for Top Partition
+ 35. Elapsed Time Per Partition
+ 36. Analysis & Synthesis Messages
+ 37. Analysis & Synthesis Suppressed Messages
 
 
 
@@ -59,14 +68,14 @@ refer to the applicable agreement for further details.
 +-------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                  ;
 +---------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status     ; Successful - Tue Nov 26 17:21:52 2019       ;
+; Analysis & Synthesis Status     ; Successful - Tue Dec  3 14:00:32 2019       ;
 ; Quartus Prime Version           ; 18.1.0 Build 625 09/12/2018 SJ Lite Edition ;
 ; Revision Name                   ; simulating-life                             ;
 ; Top-level Entity Name           ; main                                        ;
 ; Family                          ; Cyclone V                                   ;
 ; Logic utilization (in ALMs)     ; N/A                                         ;
-; Total registers                 ; 119                                         ;
-; Total pins                      ; 50                                          ;
+; Total registers                 ; 234                                         ;
+; Total pins                      ; 52                                          ;
 ; Total virtual pins              ; 0                                           ;
 ; Total block memory bits         ; 57,600                                      ;
 ; Total DSP Blocks                ; 0                                           ;
@@ -171,17 +180,22 @@ refer to the applicable agreement for further details.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 4           ;
-; Maximum allowed            ; 4           ;
+; Number detected on machine ; 48          ;
+; Maximum allowed            ; 16          ;
 ;                            ;             ;
 ; Average used               ; 1.00        ;
-; Maximum used               ; 4           ;
+; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
 ;     Processor 2            ;   0.0%      ;
 ;     Processor 3            ;   0.0%      ;
 ;     Processor 4            ;   0.0%      ;
+;     Processor 5            ;   0.0%      ;
+;     Processor 6            ;   0.0%      ;
+;     Processor 7            ;   0.0%      ;
+;     Processor 8            ;   0.0%      ;
+;     Processors 9-16        ;   0.0%      ;
 +----------------------------+-------------+
 
 
@@ -190,6 +204,10 @@ refer to the applicable agreement for further details.
 +-----------------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------------+---------+
 ; File Name with User-Entered Path        ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                               ; Library ;
 +-----------------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------------+---------+
+; ../PS2_Controller.v                     ; yes             ; User Verilog HDL File        ; /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/PS2_Controller.v                       ;         ;
+; ../Altera_UP_PS2_Data_In.v              ; yes             ; User Verilog HDL File        ; /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/Altera_UP_PS2_Data_In.v                ;         ;
+; ../Altera_UP_PS2_Command_Out.v          ; yes             ; User Verilog HDL File        ; /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/Altera_UP_PS2_Command_Out.v            ;         ;
+; ../keyboard_tracker.v                   ; yes             ; User Verilog HDL File        ; /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/keyboard_tracker.v                     ;         ;
 ; ../main.v                               ; yes             ; User Verilog HDL File        ; /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v                                 ;         ;
 ; ../vga_adapter/vga_adapter.v            ; yes             ; User Verilog HDL File        ; /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_adapter.v              ;         ;
 ; ../vga_adapter/vga_address_translator.v ; yes             ; User Verilog HDL File        ; /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_address_translator.v   ;         ;
@@ -216,60 +234,64 @@ refer to the applicable agreement for further details.
 +-----------------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------------+---------+
 
 
-+------------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary                ;
-+---------------------------------------------+--------------+
-; Resource                                    ; Usage        ;
-+---------------------------------------------+--------------+
-; Estimate of Logic utilization (ALMs needed) ; 572          ;
-;                                             ;              ;
-; Combinational ALUT usage for logic          ; 881          ;
-;     -- 7 input functions                    ; 12           ;
-;     -- 6 input functions                    ; 249          ;
-;     -- 5 input functions                    ; 153          ;
-;     -- 4 input functions                    ; 138          ;
-;     -- <=3 input functions                  ; 329          ;
-;                                             ;              ;
-; Dedicated logic registers                   ; 119          ;
-;                                             ;              ;
-; I/O pins                                    ; 50           ;
-; Total MLAB memory bits                      ; 0            ;
-; Total block memory bits                     ; 57600        ;
-;                                             ;              ;
-; Total DSP Blocks                            ; 0            ;
-;                                             ;              ;
-; Total PLLs                                  ; 1            ;
-;     -- PLLs                                 ; 1            ;
-;                                             ;              ;
-; Maximum fan-out node                        ; KEY[1]~input ;
-; Maximum fan-out                             ; 83           ;
-; Total fan-out                               ; 4589         ;
-; Average fan-out                             ; 4.13         ;
-+---------------------------------------------+--------------+
++--------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                  ;
++---------------------------------------------+----------------+
+; Resource                                    ; Usage          ;
++---------------------------------------------+----------------+
+; Estimate of Logic utilization (ALMs needed) ; 824            ;
+;                                             ;                ;
+; Combinational ALUT usage for logic          ; 1331           ;
+;     -- 7 input functions                    ; 9              ;
+;     -- 6 input functions                    ; 304            ;
+;     -- 5 input functions                    ; 310            ;
+;     -- 4 input functions                    ; 206            ;
+;     -- <=3 input functions                  ; 502            ;
+;                                             ;                ;
+; Dedicated logic registers                   ; 234            ;
+;                                             ;                ;
+; I/O pins                                    ; 52             ;
+; Total MLAB memory bits                      ; 0              ;
+; Total block memory bits                     ; 57600          ;
+;                                             ;                ;
+; Total DSP Blocks                            ; 0              ;
+;                                             ;                ;
+; Total PLLs                                  ; 1              ;
+;     -- PLLs                                 ; 1              ;
+;                                             ;                ;
+; Maximum fan-out node                        ; CLOCK_50~input ;
+; Maximum fan-out                             ; 214            ;
+; Total fan-out                               ; 6717           ;
+; Average fan-out                             ; 4.00           ;
++---------------------------------------------+----------------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                                             ;
-+---------------------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+------------------------+--------------+
-; Compilation Hierarchy Node                              ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                  ; Entity Name            ; Library Name ;
-+---------------------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+------------------------+--------------+
-; |main                                                   ; 881 (17)            ; 119 (0)                   ; 57600             ; 0          ; 50   ; 0            ; |main                                                                                                ; main                   ; work         ;
-;    |control:c1|                                         ; 7 (7)               ; 7 (7)                     ; 0                 ; 0          ; 0    ; 0            ; |main|control:c1                                                                                     ; control                ; work         ;
-;    |rateDivider:d1|                                     ; 18 (18)             ; 8 (8)                     ; 0                 ; 0          ; 0    ; 0            ; |main|rateDivider:d1                                                                                 ; rateDivider            ; work         ;
-;    |simulation:s1|                                      ; 776 (776)           ; 74 (74)                   ; 0                 ; 0          ; 0    ; 0            ; |main|simulation:s1                                                                                  ; simulation             ; work         ;
-;    |vga_adapter:VGA|                                    ; 63 (2)              ; 30 (0)                    ; 57600             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA                                                                                ; vga_adapter            ; work         ;
-;       |altsyncram:VideoMemory|                          ; 9 (0)               ; 4 (0)                     ; 57600             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory                                                         ; altsyncram             ; work         ;
-;          |altsyncram_m6m1:auto_generated|               ; 9 (0)               ; 4 (4)                     ; 57600             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated                          ; altsyncram_m6m1        ; work         ;
-;             |decode_01a:rden_decode_b|                  ; 3 (3)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|decode_01a:rden_decode_b ; decode_01a             ; work         ;
-;             |decode_7la:decode2|                        ; 3 (3)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|decode_7la:decode2       ; decode_7la             ; work         ;
-;             |mux_ifb:mux3|                              ; 3 (3)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|mux_ifb:mux3             ; mux_ifb                ; work         ;
-;       |vga_address_translator:user_input_translator|    ; 10 (10)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_address_translator:user_input_translator                                   ; vga_address_translator ; work         ;
-;       |vga_controller:controller|                       ; 42 (32)             ; 26 (26)                   ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_controller:controller                                                      ; vga_controller         ; work         ;
-;          |vga_address_translator:controller_translator| ; 10 (10)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_controller:controller|vga_address_translator:controller_translator         ; vga_address_translator ; work         ;
-;       |vga_pll:mypll|                                   ; 0 (0)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll                                                                  ; vga_pll                ; work         ;
-;          |altpll:altpll_component|                      ; 0 (0)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component                                          ; altpll                 ; work         ;
-;             |altpll_80u:auto_generated|                 ; 0 (0)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated                ; altpll_80u             ; work         ;
-+---------------------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+------------------------+--------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                                                ;
++---------------------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+---------------------------+--------------+
+; Compilation Hierarchy Node                              ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                  ; Entity Name               ; Library Name ;
++---------------------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+---------------------------+--------------+
+; |main                                                   ; 1331 (17)           ; 234 (0)                   ; 57600             ; 0          ; 52   ; 0            ; |main                                                                                                ; main                      ; work         ;
+;    |control:c1|                                         ; 9 (9)               ; 7 (7)                     ; 0                 ; 0          ; 0    ; 0            ; |main|control:c1                                                                                     ; control                   ; work         ;
+;    |keyboard_tracker:k1|                                ; 117 (12)            ; 97 (7)                    ; 0                 ; 0          ; 0    ; 0            ; |main|keyboard_tracker:k1                                                                            ; keyboard_tracker          ; work         ;
+;       |PS2_Controller:core_driver|                      ; 105 (6)             ; 90 (5)                    ; 0                 ; 0          ; 0    ; 0            ; |main|keyboard_tracker:k1|PS2_Controller:core_driver                                                 ; PS2_Controller            ; work         ;
+;          |Altera_UP_PS2_Command_Out:PS2_Command_Out|    ; 85 (85)             ; 60 (60)                   ; 0                 ; 0          ; 0    ; 0            ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out       ; Altera_UP_PS2_Command_Out ; work         ;
+;          |Altera_UP_PS2_Data_In:PS2_Data_In|            ; 14 (14)             ; 25 (25)                   ; 0                 ; 0          ; 0    ; 0            ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In               ; Altera_UP_PS2_Data_In     ; work         ;
+;    |rateDivider:d1|                                     ; 46 (46)             ; 26 (26)                   ; 0                 ; 0          ; 0    ; 0            ; |main|rateDivider:d1                                                                                 ; rateDivider               ; work         ;
+;    |simulation:s1|                                      ; 1079 (1079)         ; 74 (74)                   ; 0                 ; 0          ; 0    ; 0            ; |main|simulation:s1                                                                                  ; simulation                ; work         ;
+;    |vga_adapter:VGA|                                    ; 63 (2)              ; 30 (0)                    ; 57600             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA                                                                                ; vga_adapter               ; work         ;
+;       |altsyncram:VideoMemory|                          ; 9 (0)               ; 4 (0)                     ; 57600             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory                                                         ; altsyncram                ; work         ;
+;          |altsyncram_m6m1:auto_generated|               ; 9 (0)               ; 4 (4)                     ; 57600             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated                          ; altsyncram_m6m1           ; work         ;
+;             |decode_01a:rden_decode_b|                  ; 3 (3)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|decode_01a:rden_decode_b ; decode_01a                ; work         ;
+;             |decode_7la:decode2|                        ; 3 (3)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|decode_7la:decode2       ; decode_7la                ; work         ;
+;             |mux_ifb:mux3|                              ; 3 (3)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|mux_ifb:mux3             ; mux_ifb                   ; work         ;
+;       |vga_address_translator:user_input_translator|    ; 10 (10)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_address_translator:user_input_translator                                   ; vga_address_translator    ; work         ;
+;       |vga_controller:controller|                       ; 42 (32)             ; 26 (26)                   ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_controller:controller                                                      ; vga_controller            ; work         ;
+;          |vga_address_translator:controller_translator| ; 10 (10)             ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_controller:controller|vga_address_translator:controller_translator         ; vga_address_translator    ; work         ;
+;       |vga_pll:mypll|                                   ; 0 (0)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll                                                                  ; vga_pll                   ; work         ;
+;          |altpll:altpll_component|                      ; 0 (0)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component                                          ; altpll                    ; work         ;
+;             |altpll_80u:auto_generated|                 ; 0 (0)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated                ; altpll_80u                ; work         ;
++---------------------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+---------------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
 
@@ -298,6 +320,64 @@ Encoding Type:  One-Hot
 +---------------------------+--------------------------+-------------------------+--------------------+----------------------+---------------------------+----------------------+--------------------+
 
 
+Encoding Type:  One-Hot
++--------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |main|keyboard_tracker:k1|curr_state                                                                     ;
++----------------------------+----------------------------+---------------------------+------------------+-----------------+
+; Name                       ; curr_state.SECONDARY_BREAK ; curr_state.SECONDARY_MAKE ; curr_state.BREAK ; curr_state.MAKE ;
++----------------------------+----------------------------+---------------------------+------------------+-----------------+
+; curr_state.MAKE            ; 0                          ; 0                         ; 0                ; 0               ;
+; curr_state.BREAK           ; 0                          ; 0                         ; 1                ; 1               ;
+; curr_state.SECONDARY_MAKE  ; 0                          ; 1                         ; 0                ; 1               ;
+; curr_state.SECONDARY_BREAK ; 1                          ; 0                         ; 0                ; 1               ;
++----------------------------+----------------------------+---------------------------+------------------+-----------------+
+
+
+Encoding Type:  One-Hot
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |main|keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver                                                                                                                                                                       ;
++--------------------------------------------+--------------------------------------------+-------------------------------------------+---------------------------------------+------------------------------------+-------------------------------------------+
+; Name                                       ; s_ps2_transceiver.PS2_STATE_3_END_TRANSFER ; s_ps2_transceiver.PS2_STATE_2_COMMAND_OUT ; s_ps2_transceiver.PS2_STATE_1_DATA_IN ; s_ps2_transceiver.PS2_STATE_0_IDLE ; s_ps2_transceiver.PS2_STATE_4_END_DELAYED ;
++--------------------------------------------+--------------------------------------------+-------------------------------------------+---------------------------------------+------------------------------------+-------------------------------------------+
+; s_ps2_transceiver.PS2_STATE_0_IDLE         ; 0                                          ; 0                                         ; 0                                     ; 0                                  ; 0                                         ;
+; s_ps2_transceiver.PS2_STATE_1_DATA_IN      ; 0                                          ; 0                                         ; 1                                     ; 1                                  ; 0                                         ;
+; s_ps2_transceiver.PS2_STATE_2_COMMAND_OUT  ; 0                                          ; 1                                         ; 0                                     ; 1                                  ; 0                                         ;
+; s_ps2_transceiver.PS2_STATE_3_END_TRANSFER ; 1                                          ; 0                                         ; 0                                     ; 1                                  ; 0                                         ;
+; s_ps2_transceiver.PS2_STATE_4_END_DELAYED  ; 0                                          ; 0                                         ; 0                                     ; 1                                  ; 1                                         ;
++--------------------------------------------+--------------------------------------------+-------------------------------------------+---------------------------------------+------------------------------------+-------------------------------------------+
+
+
+Encoding Type:  One-Hot
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter                                                                                                                                                                                                                                                                                                                    ;
++------------------------------------------------------+--------------------------------------------------+------------------------------------------------+-----------------------------------------------+-------------------------------------------------+---------------------------------------------+----------------------------------------------+------------------------------------------------------+------------------------------------+
+; Name                                                 ; s_ps2_transmitter.PS2_STATE_7_TRANSMISSION_ERROR ; s_ps2_transmitter.PS2_STATE_6_COMMAND_WAS_SENT ; s_ps2_transmitter.PS2_STATE_5_RECEIVE_ACK_BIT ; s_ps2_transmitter.PS2_STATE_4_TRANSMIT_STOP_BIT ; s_ps2_transmitter.PS2_STATE_3_TRANSMIT_DATA ; s_ps2_transmitter.PS2_STATE_2_WAIT_FOR_CLOCK ; s_ps2_transmitter.PS2_STATE_1_INITIATE_COMMUNICATION ; s_ps2_transmitter.PS2_STATE_0_IDLE ;
++------------------------------------------------------+--------------------------------------------------+------------------------------------------------+-----------------------------------------------+-------------------------------------------------+---------------------------------------------+----------------------------------------------+------------------------------------------------------+------------------------------------+
+; s_ps2_transmitter.PS2_STATE_0_IDLE                   ; 0                                                ; 0                                              ; 0                                             ; 0                                               ; 0                                           ; 0                                            ; 0                                                    ; 0                                  ;
+; s_ps2_transmitter.PS2_STATE_1_INITIATE_COMMUNICATION ; 0                                                ; 0                                              ; 0                                             ; 0                                               ; 0                                           ; 0                                            ; 1                                                    ; 1                                  ;
+; s_ps2_transmitter.PS2_STATE_2_WAIT_FOR_CLOCK         ; 0                                                ; 0                                              ; 0                                             ; 0                                               ; 0                                           ; 1                                            ; 0                                                    ; 1                                  ;
+; s_ps2_transmitter.PS2_STATE_3_TRANSMIT_DATA          ; 0                                                ; 0                                              ; 0                                             ; 0                                               ; 1                                           ; 0                                            ; 0                                                    ; 1                                  ;
+; s_ps2_transmitter.PS2_STATE_4_TRANSMIT_STOP_BIT      ; 0                                                ; 0                                              ; 0                                             ; 1                                               ; 0                                           ; 0                                            ; 0                                                    ; 1                                  ;
+; s_ps2_transmitter.PS2_STATE_5_RECEIVE_ACK_BIT        ; 0                                                ; 0                                              ; 1                                             ; 0                                               ; 0                                           ; 0                                            ; 0                                                    ; 1                                  ;
+; s_ps2_transmitter.PS2_STATE_6_COMMAND_WAS_SENT       ; 0                                                ; 1                                              ; 0                                             ; 0                                               ; 0                                           ; 0                                            ; 0                                                    ; 1                                  ;
+; s_ps2_transmitter.PS2_STATE_7_TRANSMISSION_ERROR     ; 1                                                ; 0                                              ; 0                                             ; 0                                               ; 0                                           ; 0                                            ; 0                                                    ; 1                                  ;
++------------------------------------------------------+--------------------------------------------------+------------------------------------------------+-----------------------------------------------+-------------------------------------------------+---------------------------------------------+----------------------------------------------+------------------------------------------------------+------------------------------------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|s_ps2_receiver                                                                                                                  ;
++------------------------------------------+--------------------------------------+------------------------------------+------------------------------------------+---------------------------------+------------------------------------+
+; Name                                     ; s_ps2_receiver.PS2_STATE_3_PARITY_IN ; s_ps2_receiver.PS2_STATE_2_DATA_IN ; s_ps2_receiver.PS2_STATE_1_WAIT_FOR_DATA ; s_ps2_receiver.PS2_STATE_0_IDLE ; s_ps2_receiver.PS2_STATE_4_STOP_IN ;
++------------------------------------------+--------------------------------------+------------------------------------+------------------------------------------+---------------------------------+------------------------------------+
+; s_ps2_receiver.PS2_STATE_0_IDLE          ; 0                                    ; 0                                  ; 0                                        ; 0                               ; 0                                  ;
+; s_ps2_receiver.PS2_STATE_1_WAIT_FOR_DATA ; 0                                    ; 0                                  ; 1                                        ; 1                               ; 0                                  ;
+; s_ps2_receiver.PS2_STATE_2_DATA_IN       ; 0                                    ; 1                                  ; 0                                        ; 1                               ; 0                                  ;
+; s_ps2_receiver.PS2_STATE_3_PARITY_IN     ; 1                                    ; 0                                  ; 0                                        ; 1                               ; 0                                  ;
+; s_ps2_receiver.PS2_STATE_4_STOP_IN       ; 0                                    ; 0                                  ; 0                                        ; 1                               ; 1                                  ;
++------------------------------------------+--------------------------------------+------------------------------------+------------------------------------------+---------------------------------+------------------------------------+
+
+
 +----------------------------------------------------------------------------------------------------------------+
 ; User-Specified and Inferred Latches                                                                            ;
 +-----------------------------------------------------+---------------------------------+------------------------+
@@ -306,9 +386,9 @@ Encoding Type:  One-Hot
 ; x_in[6]                                             ; control:c1|current_state.LOAD_X ; yes                    ;
 ; x_in[5]                                             ; control:c1|current_state.LOAD_X ; yes                    ;
 ; x_in[7]                                             ; control:c1|current_state.LOAD_X ; yes                    ;
-; y_in[5]                                             ; control:c1|current_state.LOAD_Y ; yes                    ;
-; y_in[4]                                             ; control:c1|current_state.LOAD_Y ; yes                    ;
 ; y_in[3]                                             ; control:c1|current_state.LOAD_Y ; yes                    ;
+; y_in[4]                                             ; control:c1|current_state.LOAD_Y ; yes                    ;
+; y_in[5]                                             ; control:c1|current_state.LOAD_Y ; yes                    ;
 ; y_in[6]                                             ; control:c1|current_state.LOAD_Y ; yes                    ;
 ; x_in[0]                                             ; control:c1|current_state.LOAD_X ; yes                    ;
 ; x_in[1]                                             ; control:c1|current_state.LOAD_X ; yes                    ;
@@ -324,106 +404,151 @@ Encoding Type:  One-Hot
 Note: All latches listed above may not be present at the end of synthesis due to various synthesis optimizations.
 
 
-+-----------------------------------------------------------------------------------------+
-; Registers Removed During Synthesis                                                      ;
-+----------------------------------------+------------------------------------------------+
-; Register name                          ; Reason for Removal                             ;
-+----------------------------------------+------------------------------------------------+
-; simulation:s1|changed[10][6]           ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[10][7]           ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[10][5]           ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[10][2]           ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[10][3]           ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[10][4]           ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[8][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[8][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[8][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[9][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[9][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[9][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[9][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[8][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[8][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[8][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[9][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[9][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[4][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[6][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[4][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[6][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[4][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[6][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[7][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[5][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[7][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[5][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[7][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[5][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[7][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[5][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[4][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[6][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[4][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[6][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[4][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[6][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[7][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[5][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[7][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[5][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[2][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[2][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[2][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[3][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[3][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[3][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[3][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[2][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[2][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[2][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[3][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[3][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[0][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[1][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[0][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[1][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[0][2]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[0][4]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[1][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[1][5]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[0][6]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[0][7]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[1][3]            ; Stuck at GND due to stuck port data_in         ;
-; simulation:s1|changed[1][4]            ; Stuck at GND due to stuck port data_in         ;
-; control:c1|current_state~2             ; Lost fanout                                    ;
-; control:c1|current_state~3             ; Lost fanout                                    ;
-; control:c1|current_state~4             ; Lost fanout                                    ;
-; control:c1|current_state~5             ; Lost fanout                                    ;
-; simulation:s1|out_color[1,2]           ; Merged with simulation:s1|out_color[0]         ;
-; simulation:s1|changed_color[8][1]      ; Merged with simulation:s1|changed_color[8][0]  ;
-; simulation:s1|changed_color[8][2]      ; Merged with simulation:s1|changed_color[8][0]  ;
-; simulation:s1|changed_color[10][1]     ; Merged with simulation:s1|changed_color[10][0] ;
-; simulation:s1|changed_color[10][2]     ; Merged with simulation:s1|changed_color[10][0] ;
-; simulation:s1|changed_color[9][1]      ; Merged with simulation:s1|changed_color[9][0]  ;
-; simulation:s1|changed_color[9][2]      ; Merged with simulation:s1|changed_color[9][0]  ;
-; simulation:s1|changed_color[0][1]      ; Merged with simulation:s1|changed_color[0][0]  ;
-; simulation:s1|changed_color[0][2]      ; Merged with simulation:s1|changed_color[0][0]  ;
-; simulation:s1|changed_color[1][1]      ; Merged with simulation:s1|changed_color[1][0]  ;
-; simulation:s1|changed_color[1][2]      ; Merged with simulation:s1|changed_color[1][0]  ;
-; simulation:s1|changed_color[2][1]      ; Merged with simulation:s1|changed_color[2][0]  ;
-; simulation:s1|changed_color[2][2]      ; Merged with simulation:s1|changed_color[2][0]  ;
-; simulation:s1|changed_color[3][1]      ; Merged with simulation:s1|changed_color[3][0]  ;
-; simulation:s1|changed_color[3][2]      ; Merged with simulation:s1|changed_color[3][0]  ;
-; simulation:s1|changed_color[4][1]      ; Merged with simulation:s1|changed_color[4][0]  ;
-; simulation:s1|changed_color[4][2]      ; Merged with simulation:s1|changed_color[4][0]  ;
-; simulation:s1|changed_color[5][1]      ; Merged with simulation:s1|changed_color[5][0]  ;
-; simulation:s1|changed_color[5][2]      ; Merged with simulation:s1|changed_color[5][0]  ;
-; simulation:s1|changed_color[6][1]      ; Merged with simulation:s1|changed_color[6][0]  ;
-; simulation:s1|changed_color[6][2]      ; Merged with simulation:s1|changed_color[6][0]  ;
-; simulation:s1|changed_color[7][1]      ; Merged with simulation:s1|changed_color[7][0]  ;
-; simulation:s1|changed_color[7][2]      ; Merged with simulation:s1|changed_color[7][0]  ;
-; Total Number of Removed Registers = 94 ;                                                ;
-+----------------------------------------+------------------------------------------------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                                                                                                                                                                                              ;
++-------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+; Register name                                                                                                                             ; Reason for Removal                                                                                                  ;
++-------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+; keyboard_tracker:k1|PS2_Controller:core_driver|idle_counter[0..7]                                                                         ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|ps2_command[1..7]                                ; Merged with keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|ps2_command[0] ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|ps2_command[0]                                   ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[8][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[10][7]                                                                                                              ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[8][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[10][6]                                                                                                              ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[8][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[10][5]                                                                                                              ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[9][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[9][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[9][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[9][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[8][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[10][2]                                                                                                              ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[8][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[10][3]                                                                                                              ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[8][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[10][4]                                                                                                              ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[9][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[9][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[4][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[6][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[4][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[6][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[4][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[6][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[7][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[5][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[7][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[5][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[7][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[5][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[7][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[5][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[4][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[6][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[4][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[6][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[4][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[6][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[7][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[5][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[7][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[5][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[2][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[2][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[2][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[3][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[3][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[3][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[3][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[2][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[2][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[2][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[3][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[3][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[0][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[0][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[1][3]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[1][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[1][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[0][4]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[1][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[1][2]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[0][5]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[0][6]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[1][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; simulation:s1|changed[0][7]                                                                                                               ; Stuck at GND due to stuck port data_in                                                                              ;
+; control:c1|current_state~2                                                                                                                ; Lost fanout                                                                                                         ;
+; control:c1|current_state~3                                                                                                                ; Lost fanout                                                                                                         ;
+; control:c1|current_state~4                                                                                                                ; Lost fanout                                                                                                         ;
+; control:c1|current_state~5                                                                                                                ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|curr_state~5                                                                                                          ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|curr_state~6                                                                                                          ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver~2                                                                        ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver~3                                                                        ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter~2                              ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter~3                              ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter~4                              ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|s_ps2_receiver~2                                         ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|s_ps2_receiver~3                                         ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|curr_state.BREAK                                                                                                      ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|curr_state.SECONDARY_MAKE                                                                                             ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|curr_state.SECONDARY_BREAK                                                                                            ; Lost fanout                                                                                                         ;
+; simulation:s1|out_color[1,2]                                                                                                              ; Merged with simulation:s1|out_color[0]                                                                              ;
+; simulation:s1|changed_color[8][1]                                                                                                         ; Merged with simulation:s1|changed_color[8][0]                                                                       ;
+; simulation:s1|changed_color[8][2]                                                                                                         ; Merged with simulation:s1|changed_color[8][0]                                                                       ;
+; simulation:s1|changed_color[10][1]                                                                                                        ; Merged with simulation:s1|changed_color[10][0]                                                                      ;
+; simulation:s1|changed_color[10][2]                                                                                                        ; Merged with simulation:s1|changed_color[10][0]                                                                      ;
+; simulation:s1|changed_color[9][1]                                                                                                         ; Merged with simulation:s1|changed_color[9][0]                                                                       ;
+; simulation:s1|changed_color[9][2]                                                                                                         ; Merged with simulation:s1|changed_color[9][0]                                                                       ;
+; simulation:s1|changed_color[0][1]                                                                                                         ; Merged with simulation:s1|changed_color[0][0]                                                                       ;
+; simulation:s1|changed_color[0][2]                                                                                                         ; Merged with simulation:s1|changed_color[0][0]                                                                       ;
+; simulation:s1|changed_color[1][1]                                                                                                         ; Merged with simulation:s1|changed_color[1][0]                                                                       ;
+; simulation:s1|changed_color[1][2]                                                                                                         ; Merged with simulation:s1|changed_color[1][0]                                                                       ;
+; simulation:s1|changed_color[2][1]                                                                                                         ; Merged with simulation:s1|changed_color[2][0]                                                                       ;
+; simulation:s1|changed_color[2][2]                                                                                                         ; Merged with simulation:s1|changed_color[2][0]                                                                       ;
+; simulation:s1|changed_color[3][1]                                                                                                         ; Merged with simulation:s1|changed_color[3][0]                                                                       ;
+; simulation:s1|changed_color[3][2]                                                                                                         ; Merged with simulation:s1|changed_color[3][0]                                                                       ;
+; simulation:s1|changed_color[4][1]                                                                                                         ; Merged with simulation:s1|changed_color[4][0]                                                                       ;
+; simulation:s1|changed_color[4][2]                                                                                                         ; Merged with simulation:s1|changed_color[4][0]                                                                       ;
+; simulation:s1|changed_color[5][1]                                                                                                         ; Merged with simulation:s1|changed_color[5][0]                                                                       ;
+; simulation:s1|changed_color[5][2]                                                                                                         ; Merged with simulation:s1|changed_color[5][0]                                                                       ;
+; simulation:s1|changed_color[6][1]                                                                                                         ; Merged with simulation:s1|changed_color[6][0]                                                                       ;
+; simulation:s1|changed_color[6][2]                                                                                                         ; Merged with simulation:s1|changed_color[6][0]                                                                       ;
+; simulation:s1|changed_color[7][1]                                                                                                         ; Merged with simulation:s1|changed_color[7][0]                                                                       ;
+; simulation:s1|changed_color[7][2]                                                                                                         ; Merged with simulation:s1|changed_color[7][0]                                                                       ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver.PS2_STATE_2_COMMAND_OUT                                                  ; Stuck at GND due to stuck port data_in                                                                              ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver.PS2_STATE_4_END_DELAYED                                                  ; Stuck at GND due to stuck port data_in                                                                              ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|command_was_sent                                 ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|error_communication_timed_out                    ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver.PS2_STATE_3_END_TRANSFER                                                 ; Stuck at GND due to stuck port data_in                                                                              ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|s_ps2_receiver.PS2_STATE_1_WAIT_FOR_DATA                 ; Stuck at GND due to stuck port data_in                                                                              ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter.PS2_STATE_0_IDLE               ; Stuck at GND due to stuck port data_in                                                                              ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter.PS2_STATE_6_COMMAND_WAS_SENT   ; Lost fanout                                                                                                         ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter.PS2_STATE_7_TRANSMISSION_ERROR ; Lost fanout                                                                                                         ;
+; Total Number of Removed Registers = 131                                                                                                   ;                                                                                                                     ;
++-------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                                                                                                                                                      ;
++------------------------------------------------------------------------------------------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+; Register name                                                                            ; Reason for Removal        ; Registers Removed due to This Register                                                                                                    ;
++------------------------------------------------------------------------------------------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
+; keyboard_tracker:k1|PS2_Controller:core_driver|idle_counter[3]                           ; Lost Fanouts              ; keyboard_tracker:k1|PS2_Controller:core_driver|idle_counter[4],                                                                           ;
+;                                                                                          ;                           ; keyboard_tracker:k1|PS2_Controller:core_driver|idle_counter[5],                                                                           ;
+;                                                                                          ;                           ; keyboard_tracker:k1|PS2_Controller:core_driver|idle_counter[6],                                                                           ;
+;                                                                                          ;                           ; keyboard_tracker:k1|PS2_Controller:core_driver|idle_counter[7]                                                                            ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver~2                       ; Lost Fanouts              ; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|command_was_sent,                                ;
+;                                                                                          ;                           ; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|error_communication_timed_out,                   ;
+;                                                                                          ;                           ; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter.PS2_STATE_6_COMMAND_WAS_SENT,  ;
+;                                                                                          ;                           ; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|s_ps2_transmitter.PS2_STATE_7_TRANSMISSION_ERROR ;
+; keyboard_tracker:k1|curr_state~5                                                         ; Lost Fanouts              ; keyboard_tracker:k1|curr_state.BREAK,                                                                                                     ;
+;                                                                                          ;                           ; keyboard_tracker:k1|curr_state.SECONDARY_BREAK                                                                                            ;
+; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver.PS2_STATE_2_COMMAND_OUT ; Stuck at GND              ; keyboard_tracker:k1|PS2_Controller:core_driver|s_ps2_transceiver.PS2_STATE_3_END_TRANSFER,                                                ;
+;                                                                                          ; due to stuck port data_in ; keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|s_ps2_receiver.PS2_STATE_1_WAIT_FOR_DATA                 ;
+; keyboard_tracker:k1|curr_state~6                                                         ; Lost Fanouts              ; keyboard_tracker:k1|curr_state.SECONDARY_MAKE                                                                                             ;
++------------------------------------------------------------------------------------------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------+
 
 
 +------------------------------------------------------+
@@ -431,47 +556,57 @@ Note: All latches listed above may not be present at the end of synthesis due to
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 119   ;
-; Number of registers using Synchronous Clear  ; 61    ;
-; Number of registers using Synchronous Load   ; 16    ;
+; Total registers                              ; 234   ;
+; Number of registers using Synchronous Clear  ; 132   ;
+; Number of registers using Synchronous Load   ; 15    ;
 ; Number of registers using Asynchronous Clear ; 20    ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 55    ;
+; Number of registers using Clock Enable       ; 129   ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                                                        ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------------------------------------------+
-; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                                                              ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------------------------------------------+
-; 3:1                ; 15 bits   ; 30 LEs        ; 0 LEs                ; 30 LEs                 ; Yes        ; |main|simulation:s1|out_y[5]                                                                            ;
-; 3:1                ; 8 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |main|rateDivider:d1|q[6]                                                                               ;
-; 3:1                ; 10 bits   ; 20 LEs        ; 0 LEs                ; 20 LEs                 ; Yes        ; |main|vga_adapter:VGA|vga_controller:controller|yCounter[3]                                             ;
-; 5:1                ; 8 bits    ; 24 LEs        ; 16 LEs               ; 8 LEs                  ; Yes        ; |main|simulation:s1|changed_count[4]                                                                    ;
-; 13:1               ; 3 bits    ; 24 LEs        ; 24 LEs               ; 0 LEs                  ; Yes        ; |main|simulation:s1|out_color[2]                                                                        ;
-; 15:1               ; 16 bits   ; 160 LEs       ; 128 LEs              ; 32 LEs                 ; Yes        ; |main|simulation:s1|changed[8][7]                                                                       ;
-; 15:1               ; 8 bits    ; 80 LEs        ; 64 LEs               ; 16 LEs                 ; Yes        ; |main|simulation:s1|changed[10][6]                                                                      ;
-; 16:1               ; 16 bits   ; 160 LEs       ; 144 LEs              ; 16 LEs                 ; Yes        ; |main|simulation:s1|changed[5][4]                                                                       ;
-; 16:1               ; 16 bits   ; 160 LEs       ; 144 LEs              ; 16 LEs                 ; Yes        ; |main|simulation:s1|changed[7][6]                                                                       ;
-; 17:1               ; 16 bits   ; 176 LEs       ; 160 LEs              ; 16 LEs                 ; Yes        ; |main|simulation:s1|changed[2][0]                                                                       ;
-; 20:1               ; 16 bits   ; 208 LEs       ; 160 LEs              ; 48 LEs                 ; Yes        ; |main|simulation:s1|changed[1][1]                                                                       ;
-; 26:1               ; 3 bits    ; 51 LEs        ; 48 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[8][1]                                                                 ;
-; 26:1               ; 3 bits    ; 51 LEs        ; 48 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[9][1]                                                                 ;
-; 26:1               ; 3 bits    ; 51 LEs        ; 48 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[10][1]                                                                ;
-; 28:1               ; 3 bits    ; 54 LEs        ; 51 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[4][1]                                                                 ;
-; 28:1               ; 3 bits    ; 54 LEs        ; 51 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[5][1]                                                                 ;
-; 28:1               ; 3 bits    ; 54 LEs        ; 51 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[6][1]                                                                 ;
-; 28:1               ; 3 bits    ; 54 LEs        ; 51 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[7][1]                                                                 ;
-; 30:1               ; 3 bits    ; 60 LEs        ; 54 LEs               ; 6 LEs                  ; Yes        ; |main|simulation:s1|changed_color[2][1]                                                                 ;
-; 30:1               ; 3 bits    ; 60 LEs        ; 54 LEs               ; 6 LEs                  ; Yes        ; |main|simulation:s1|changed_color[3][1]                                                                 ;
-; 32:1               ; 3 bits    ; 63 LEs        ; 60 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[1][1]                                                                 ;
-; 35:1               ; 3 bits    ; 69 LEs        ; 66 LEs               ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_color[0][1]                                                                 ;
-; 3:1                ; 3 bits    ; 6 LEs         ; 6 LEs                ; 0 LEs                  ; No         ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|mux_ifb:mux3|result_node[0] ;
-; 5:1                ; 8 bits    ; 24 LEs        ; 24 LEs               ; 0 LEs                  ; No         ; |main|simulation:s1|Mux18                                                                               ;
-; 6:1                ; 8 bits    ; 32 LEs        ; 32 LEs               ; 0 LEs                  ; No         ; |main|simulation:s1|Mux11                                                                               ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+---------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                                                                           ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                                                                                 ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------------------------------------------------------------------------------------+
+; 3:1                ; 8 bits    ; 16 LEs        ; 0 LEs                ; 16 LEs                 ; Yes        ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|received_data[4]                    ;
+; 3:1                ; 8 bits    ; 16 LEs        ; 0 LEs                ; 16 LEs                 ; Yes        ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|data_shift_reg[0]                   ;
+; 3:1                ; 15 bits   ; 30 LEs        ; 0 LEs                ; 30 LEs                 ; Yes        ; |main|simulation:s1|out_x[0]                                                                                               ;
+; 3:1                ; 10 bits   ; 20 LEs        ; 0 LEs                ; 20 LEs                 ; Yes        ; |main|vga_adapter:VGA|vga_controller:controller|yCounter[2]                                                                ;
+; 3:1                ; 26 bits   ; 52 LEs        ; 26 LEs               ; 26 LEs                 ; Yes        ; |main|rateDivider:d1|q[24]                                                                                                 ;
+; 4:1                ; 13 bits   ; 26 LEs        ; 0 LEs                ; 26 LEs                 ; Yes        ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|command_initiate_counter[1] ;
+; 4:1                ; 20 bits   ; 40 LEs        ; 0 LEs                ; 40 LEs                 ; Yes        ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|waiting_counter[17]         ;
+; 4:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; Yes        ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|cur_bit[3]                  ;
+; 4:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; Yes        ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In|data_count[0]                       ;
+; 4:1                ; 17 bits   ; 34 LEs        ; 0 LEs                ; 34 LEs                 ; Yes        ; |main|keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out|transfer_counter[11]        ;
+; 5:1                ; 3 bits    ; 9 LEs         ; 6 LEs                ; 3 LEs                  ; Yes        ; |main|simulation:s1|changed_count[6]                                                                                       ;
+; 5:1                ; 5 bits    ; 15 LEs        ; 10 LEs               ; 5 LEs                  ; Yes        ; |main|simulation:s1|changed_count[4]                                                                                       ;
+; 13:1               ; 3 bits    ; 24 LEs        ; 24 LEs               ; 0 LEs                  ; Yes        ; |main|simulation:s1|out_color[0]                                                                                           ;
+; 29:1               ; 16 bits   ; 304 LEs       ; 256 LEs              ; 48 LEs                 ; Yes        ; |main|simulation:s1|changed[8][7]                                                                                          ;
+; 29:1               ; 8 bits    ; 152 LEs       ; 128 LEs              ; 24 LEs                 ; Yes        ; |main|simulation:s1|changed[10][7]                                                                                         ;
+; 31:1               ; 16 bits   ; 320 LEs       ; 288 LEs              ; 32 LEs                 ; Yes        ; |main|simulation:s1|changed[7][3]                                                                                          ;
+; 32:1               ; 16 bits   ; 336 LEs       ; 288 LEs              ; 48 LEs                 ; Yes        ; |main|simulation:s1|changed[5][0]                                                                                          ;
+; 36:1               ; 3 bits    ; 72 LEs        ; 60 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[9][1]                                                                                    ;
+; 36:1               ; 3 bits    ; 72 LEs        ; 60 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[10][0]                                                                                   ;
+; 34:1               ; 16 bits   ; 352 LEs       ; 304 LEs              ; 48 LEs                 ; Yes        ; |main|simulation:s1|changed[2][1]                                                                                          ;
+; 37:1               ; 3 bits    ; 72 LEs        ; 63 LEs               ; 9 LEs                  ; Yes        ; |main|simulation:s1|changed_color[8][0]                                                                                    ;
+; 38:1               ; 16 bits   ; 400 LEs       ; 320 LEs              ; 80 LEs                 ; Yes        ; |main|simulation:s1|changed[1][1]                                                                                          ;
+; 42:1               ; 3 bits    ; 84 LEs        ; 72 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[4][0]                                                                                    ;
+; 42:1               ; 3 bits    ; 84 LEs        ; 72 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[5][2]                                                                                    ;
+; 42:1               ; 3 bits    ; 84 LEs        ; 72 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[6][1]                                                                                    ;
+; 42:1               ; 3 bits    ; 84 LEs        ; 72 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[7][0]                                                                                    ;
+; 45:1               ; 3 bits    ; 90 LEs        ; 78 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[3][0]                                                                                    ;
+; 46:1               ; 3 bits    ; 90 LEs        ; 81 LEs               ; 9 LEs                  ; Yes        ; |main|simulation:s1|changed_color[2][1]                                                                                    ;
+; 49:1               ; 3 bits    ; 96 LEs        ; 87 LEs               ; 9 LEs                  ; Yes        ; |main|simulation:s1|changed_color[1][1]                                                                                    ;
+; 53:1               ; 3 bits    ; 105 LEs       ; 93 LEs               ; 12 LEs                 ; Yes        ; |main|simulation:s1|changed_color[0][2]                                                                                    ;
+; 3:1                ; 3 bits    ; 6 LEs         ; 6 LEs                ; 0 LEs                  ; No         ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_m6m1:auto_generated|mux_ifb:mux3|result_node[2]                    ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; No         ; |main|keyboard_tracker:k1|curr_state                                                                                       ;
+; 4:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; No         ; |main|keyboard_tracker:k1|curr_state                                                                                       ;
+; 5:1                ; 8 bits    ; 24 LEs        ; 24 LEs               ; 0 LEs                  ; No         ; |main|simulation:s1|Mux17                                                                                                  ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 32 LEs               ; 0 LEs                  ; No         ; |main|simulation:s1|Mux9                                                                                                   ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------------------------------------------------------------------------------------+
 
 
 +----------------------------------------------------------------------------------------------+
@@ -481,6 +616,52 @@ Note: All latches listed above may not be present at the end of synthesis due to
 +---------------------------------+--------------------+------+--------------------------------+
 ; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -                              ;
 +---------------------------------+--------------------+------+--------------------------------+
+
+
++------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: keyboard_tracker:k1 ;
++----------------+-------+-----------------------------------------+
+; Parameter Name ; Value ; Type                                    ;
++----------------+-------+-----------------------------------------+
+; PULSE_OR_HOLD  ; 1     ; Signed Integer                          ;
++----------------+-------+-----------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: keyboard_tracker:k1|PS2_Controller:core_driver ;
++------------------+-------+------------------------------------------------------------------+
+; Parameter Name   ; Value ; Type                                                             ;
++------------------+-------+------------------------------------------------------------------+
+; INITIALIZE_MOUSE ; 0     ; Signed Integer                                                   ;
++------------------+-------+------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out ;
++------------------------------------+----------------------+---------------------------------------------------------------------------+
+; Parameter Name                     ; Value                ; Type                                                                      ;
++------------------------------------+----------------------+---------------------------------------------------------------------------+
+; CLOCK_CYCLES_FOR_101US             ; 5050                 ; Signed Integer                                                            ;
+; NUMBER_OF_BITS_FOR_101US           ; 13                   ; Signed Integer                                                            ;
+; COUNTER_INCREMENT_FOR_101US        ; 0000000000001        ; Unsigned Binary                                                           ;
+; CLOCK_CYCLES_FOR_15MS              ; 750000               ; Signed Integer                                                            ;
+; NUMBER_OF_BITS_FOR_15MS            ; 20                   ; Signed Integer                                                            ;
+; COUNTER_INCREMENT_FOR_15MS         ; 00000000000000000001 ; Unsigned Binary                                                           ;
+; CLOCK_CYCLES_FOR_2MS               ; 100000               ; Signed Integer                                                            ;
+; NUMBER_OF_BITS_FOR_2MS             ; 17                   ; Signed Integer                                                            ;
+; COUNTER_INCREMENT_FOR_2MS          ; 00000000000000001    ; Unsigned Binary                                                           ;
+; PS2_STATE_0_IDLE                   ; 000                  ; Unsigned Binary                                                           ;
+; PS2_STATE_1_INITIATE_COMMUNICATION ; 001                  ; Unsigned Binary                                                           ;
+; PS2_STATE_2_WAIT_FOR_CLOCK         ; 010                  ; Unsigned Binary                                                           ;
+; PS2_STATE_3_TRANSMIT_DATA          ; 011                  ; Unsigned Binary                                                           ;
+; PS2_STATE_4_TRANSMIT_STOP_BIT      ; 100                  ; Unsigned Binary                                                           ;
+; PS2_STATE_5_RECEIVE_ACK_BIT        ; 101                  ; Unsigned Binary                                                           ;
+; PS2_STATE_6_COMMAND_WAS_SENT       ; 110                  ; Unsigned Binary                                                           ;
+; PS2_STATE_7_TRANSMISSION_ERROR     ; 111                  ; Unsigned Binary                                                           ;
++------------------------------------+----------------------+---------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
 +--------------------------------------------------------------+
@@ -1017,14 +1198,34 @@ Note: In order to hide this table in the UI and the text report file, please set
 +------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
-+--------------------------------------------+
-; Port Connectivity Checks: "rateDivider:d1" ;
-+---------+-------+----------+---------------+
-; Port    ; Type  ; Severity ; Details       ;
-+---------+-------+----------+---------------+
-; d[6..0] ; Input ; Info     ; Stuck at GND  ;
-; d[7]    ; Input ; Info     ; Stuck at VCC  ;
-+---------+-------+----------+---------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "keyboard_tracker:k1|PS2_Controller:core_driver"                                                                                                                       ;
++-------------------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; Port                          ; Type   ; Severity ; Details                                                                                                                                      ;
++-------------------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+; the_command                   ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; send_command                  ; Input  ; Warning  ; Declared by entity but not connected by instance. If a default value exists, it will be used.  Otherwise, the port will be connected to GND. ;
+; command_was_sent              ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
+; error_communication_timed_out ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed.                                     ;
++-------------------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++---------------------------------------------+
+; Port Connectivity Checks: "rateDivider:d1"  ;
++-----------+-------+----------+--------------+
+; Port      ; Type  ; Severity ; Details      ;
++-----------+-------+----------+--------------+
+; d[23..19] ; Input ; Info     ; Stuck at VCC ;
+; d[15..12] ; Input ; Info     ; Stuck at VCC ;
+; d[11..8]  ; Input ; Info     ; Stuck at GND ;
+; d[6..0]   ; Input ; Info     ; Stuck at GND ;
+; d[25]     ; Input ; Info     ; Stuck at VCC ;
+; d[24]     ; Input ; Info     ; Stuck at GND ;
+; d[18]     ; Input ; Info     ; Stuck at GND ;
+; d[17]     ; Input ; Info     ; Stuck at VCC ;
+; d[16]     ; Input ; Info     ; Stuck at GND ;
+; d[7]      ; Input ; Info     ; Stuck at VCC ;
++-----------+-------+----------+--------------+
 
 
 +-----------------------------------------------------+
@@ -1032,42 +1233,43 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; arriav_ff             ; 119                         ;
+; arriav_ff             ; 234                         ;
 ;     CLR SCLR          ; 10                          ;
-;     ENA               ; 16                          ;
+;     ENA               ; 34                          ;
 ;     ENA CLR SCLR      ; 10                          ;
-;     ENA SCLR          ; 14                          ;
+;     ENA SCLR          ; 70                          ;
 ;     ENA SLD           ; 15                          ;
-;     SCLR              ; 26                          ;
-;     SCLR SLD          ; 1                           ;
-;     plain             ; 27                          ;
-; arriav_lcell_comb     ; 882                         ;
-;     arith             ; 121                         ;
+;     SCLR              ; 42                          ;
+;     plain             ; 53                          ;
+; arriav_io_obuf        ; 2                           ;
+; arriav_lcell_comb     ; 1332                        ;
+;     arith             ; 189                         ;
 ;         0 data inputs ; 10                          ;
-;         1 data inputs ; 37                          ;
+;         1 data inputs ; 105                         ;
 ;         2 data inputs ; 5                           ;
 ;         3 data inputs ; 57                          ;
 ;         4 data inputs ; 12                          ;
-;     extend            ; 12                          ;
-;         7 data inputs ; 12                          ;
-;     normal            ; 729                         ;
+;     extend            ; 9                           ;
+;         7 data inputs ; 9                           ;
+;     normal            ; 1114                        ;
 ;         0 data inputs ; 2                           ;
-;         2 data inputs ; 47                          ;
-;         3 data inputs ; 152                         ;
-;         4 data inputs ; 126                         ;
-;         5 data inputs ; 153                         ;
-;         6 data inputs ; 249                         ;
+;         1 data inputs ; 1                           ;
+;         2 data inputs ; 110                         ;
+;         3 data inputs ; 193                         ;
+;         4 data inputs ; 194                         ;
+;         5 data inputs ; 310                         ;
+;         6 data inputs ; 304                         ;
 ;     shared            ; 20                          ;
 ;         0 data inputs ; 2                           ;
 ;         1 data inputs ; 4                           ;
 ;         2 data inputs ; 12                          ;
 ;         3 data inputs ; 2                           ;
-; boundary_port         ; 50                          ;
+; boundary_port         ; 52                          ;
 ; generic_pll           ; 1                           ;
 ; stratixv_ram_block    ; 9                           ;
 ;                       ;                             ;
-; Max LUT depth         ; 18.90                       ;
-; Average LUT depth     ; 11.84                       ;
+; Max LUT depth         ; 19.90                       ;
+; Average LUT depth     ; 10.37                       ;
 +-----------------------+-----------------------------+
 
 
@@ -1076,7 +1278,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:20     ;
+; Top            ; 00:00:32     ;
 +----------------+--------------+
 
 
@@ -1086,16 +1288,23 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
-    Info: Processing started: Tue Nov 26 17:21:06 2019
+    Info: Processing started: Tue Dec  3 13:59:32 2019
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off simulating-life -c simulating-life
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
-Warning (10229): Verilog HDL Expression warning at main.v(50): truncated literal to match 8 bits File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 50
+Info (20030): Parallel compilation is enabled and will use 16 of the 48 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/PS2_Controller.v
+    Info (12023): Found entity 1: PS2_Controller File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/PS2_Controller.v Line: 9
+Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/Altera_UP_PS2_Data_In.v
+    Info (12023): Found entity 1: Altera_UP_PS2_Data_In File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/Altera_UP_PS2_Data_In.v Line: 10
+Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/Altera_UP_PS2_Command_Out.v
+    Info (12023): Found entity 1: Altera_UP_PS2_Command_Out File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/Altera_UP_PS2_Command_Out.v Line: 10
+Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/keyboard_tracker.v
+    Info (12023): Found entity 1: keyboard_tracker File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/keyboard_tracker.v Line: 117
 Info (12021): Found 4 design units, including 4 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v
     Info (12023): Found entity 1: main File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 1
-    Info (12023): Found entity 2: simulation File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
-    Info (12023): Found entity 3: control File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 227
-    Info (12023): Found entity 4: rateDivider File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 318
+    Info (12023): Found entity 2: simulation File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 131
+    Info (12023): Found entity 3: control File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 269
+    Info (12023): Found entity 4: rateDivider File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 380
 Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_adapter.v
     Info (12023): Found entity 1: vga_adapter File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_adapter.v Line: 78
 Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_address_translator.v
@@ -1104,28 +1313,34 @@ Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c
     Info (12023): Found entity 1: vga_controller File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_controller.v Line: 9
 Info (12021): Found 1 design units, including 1 entities, in source file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_pll.v
     Info (12023): Found entity 1: vga_pll File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_pll.v Line: 36
+Warning (10236): Verilog HDL Implicit Net warning at main.v(58): created implicit net for "divided_start" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 58
 Info (12127): Elaborating entity "main" for the top level hierarchy
-Warning (10240): Verilog HDL Always Construct warning at main.v(86): inferring latch(es) for variable "x_in", which holds its previous value in one or more paths through the always construct File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Warning (10240): Verilog HDL Always Construct warning at main.v(86): inferring latch(es) for variable "y_in", which holds its previous value in one or more paths through the always construct File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "y_in[0]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "y_in[1]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "y_in[2]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "y_in[3]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "y_in[4]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "y_in[5]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "y_in[6]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "y_in[7]" at main.v(88) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 88
-Info (10041): Inferred latch for "x_in[0]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "x_in[1]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "x_in[2]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "x_in[3]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "x_in[4]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "x_in[5]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "x_in[6]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (10041): Inferred latch for "x_in[7]" at main.v(86) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 86
-Info (12128): Elaborating entity "rateDivider" for hierarchy "rateDivider:d1" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 51
-Warning (10230): Verilog HDL assignment warning at main.v(326): truncated value with size 32 to match size of target (1) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 326
-Info (12128): Elaborating entity "vga_adapter" for hierarchy "vga_adapter:VGA" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 72
+Warning (10230): Verilog HDL assignment warning at main.v(58): truncated value with size 32 to match size of target (1) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 58
+Warning (10240): Verilog HDL Always Construct warning at main.v(107): inferring latch(es) for variable "x_in", which holds its previous value in one or more paths through the always construct File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Warning (10240): Verilog HDL Always Construct warning at main.v(107): inferring latch(es) for variable "y_in", which holds its previous value in one or more paths through the always construct File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "y_in[0]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "y_in[1]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "y_in[2]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "y_in[3]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "y_in[4]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "y_in[5]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "y_in[6]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "y_in[7]" at main.v(109) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 109
+Info (10041): Inferred latch for "x_in[0]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "x_in[1]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "x_in[2]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "x_in[3]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "x_in[4]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "x_in[5]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "x_in[6]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (10041): Inferred latch for "x_in[7]" at main.v(107) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 107
+Info (12128): Elaborating entity "rateDivider" for hierarchy "rateDivider:d1" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 62
+Warning (10230): Verilog HDL assignment warning at main.v(388): truncated value with size 32 to match size of target (1) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 388
+Info (12128): Elaborating entity "keyboard_tracker" for hierarchy "keyboard_tracker:k1" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 72
+Info (12128): Elaborating entity "PS2_Controller" for hierarchy "keyboard_tracker:k1|PS2_Controller:core_driver" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/keyboard_tracker.v Line: 198
+Info (12128): Elaborating entity "Altera_UP_PS2_Data_In" for hierarchy "keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Data_In:PS2_Data_In" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/PS2_Controller.v Line: 246
+Info (12128): Elaborating entity "Altera_UP_PS2_Command_Out" for hierarchy "keyboard_tracker:k1|PS2_Controller:core_driver|Altera_UP_PS2_Command_Out:PS2_Command_Out" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/PS2_Controller.v Line: 266
+Info (12128): Elaborating entity "vga_adapter" for hierarchy "vga_adapter:VGA" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 93
 Info (12128): Elaborating entity "vga_address_translator" for hierarchy "vga_adapter:VGA|vga_address_translator:user_input_translator" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_adapter.v Line: 192
 Info (12128): Elaborating entity "altsyncram" for hierarchy "vga_adapter:VGA|altsyncram:VideoMemory" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_adapter.v Line: 213
 Info (12130): Elaborated megafunction instantiation "vga_adapter:VGA|altsyncram:VideoMemory" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_adapter.v Line: 213
@@ -1176,42 +1391,49 @@ Info (12021): Found 1 design units, including 1 entities, in source file db/altp
     Info (12023): Found entity 1: altpll_80u File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/quartus_project/db/altpll_80u.tdf Line: 25
 Info (12128): Elaborating entity "altpll_80u" for hierarchy "vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated" File: /s/appspace/quartus/quartus/libraries/megafunctions/altpll.tdf Line: 897
 Info (12128): Elaborating entity "vga_controller" for hierarchy "vga_adapter:VGA|vga_controller:controller" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/vga_adapter/vga_adapter.v Line: 252
-Info (12128): Elaborating entity "control" for hierarchy "control:c1" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 103
-Info (10264): Verilog HDL Case Statement information at main.v(292): all case item expressions in this case statement are onehot File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 292
-Info (12128): Elaborating entity "simulation" for hierarchy "simulation:s1" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 105
-Warning (10230): Verilog HDL assignment warning at main.v(158): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 158
-Warning (10230): Verilog HDL assignment warning at main.v(185): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 185
-Warning (10230): Verilog HDL assignment warning at main.v(186): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 186
-Warning (10230): Verilog HDL assignment warning at main.v(205): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 205
-Warning (10230): Verilog HDL assignment warning at main.v(206): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 206
-Warning (10230): Verilog HDL assignment warning at main.v(212): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 212
-Warning (10230): Verilog HDL assignment warning at main.v(213): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 213
-Warning (10230): Verilog HDL assignment warning at main.v(221): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 221
-Warning (12241): 1 hierarchies have connectivity warnings - see the Connectivity Checks report folder
+Info (12128): Elaborating entity "control" for hierarchy "control:c1" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 125
+Info (10264): Verilog HDL Case Statement information at main.v(336): all case item expressions in this case statement are onehot File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 336
+Info (12128): Elaborating entity "simulation" for hierarchy "simulation:s1" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 127
+Warning (10230): Verilog HDL assignment warning at main.v(164): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 164
+Warning (10230): Verilog HDL assignment warning at main.v(165): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 165
+Warning (10230): Verilog HDL assignment warning at main.v(172): truncated value with size 32 to match size of target (1) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 172
+Warning (10230): Verilog HDL assignment warning at main.v(173): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 173
+Warning (10230): Verilog HDL assignment warning at main.v(193): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 193
+Warning (10230): Verilog HDL assignment warning at main.v(222): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 222
+Warning (10230): Verilog HDL assignment warning at main.v(223): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 223
+Warning (10230): Verilog HDL assignment warning at main.v(245): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 245
+Warning (10230): Verilog HDL assignment warning at main.v(246): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 246
+Warning (10230): Verilog HDL assignment warning at main.v(253): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 253
+Warning (10230): Verilog HDL assignment warning at main.v(254): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 254
+Warning (10230): Verilog HDL assignment warning at main.v(263): truncated value with size 32 to match size of target (8) File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 263
+Warning (12241): 2 hierarchies have connectivity warnings - see the Connectivity Checks report folder
 Warning (13024): Output pins are stuck at VCC or GND
-    Warning (13410): Pin "VGA_SYNC_N" is stuck at VCC File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 28
+    Warning (13410): Pin "VGA_SYNC_N" is stuck at VCC File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 31
 Info (286030): Timing-Driven Synthesis is running
-Info (17049): 4 registers lost all their fanouts during netlist optimizations.
+Info (17049): 28 registers lost all their fanouts during netlist optimizations.
 Info (144001): Generated suppressed messages file /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/quartus_project/output_files/simulating-life.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 5 node(s), including 0 DDIO, 1 PLL, 0 transceiver and 0 LCELL
 Warning: RST port on the PLL is not properly connected on instance vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated|generic_pll1. The reset port on the PLL should be connected. If the PLL loses lock for any reason, you might need to manually reset the PLL in order to re-establish lock to the reference clock. File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/quartus_project/db/altpll_80u.tdf Line: 33
     Info: Must be connected
-Warning (21074): Design contains 3 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "KEY[3]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 20
-    Warning (15610): No output dependent on input pin "SW[8]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 19
-    Warning (15610): No output dependent on input pin "SW[9]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 19
-Info (21057): Implemented 967 device resources after synthesis - the final resource count might be different
+Warning (21074): Design contains 5 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "KEY[0]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 23
+    Warning (15610): No output dependent on input pin "KEY[2]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 23
+    Warning (15610): No output dependent on input pin "KEY[3]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 23
+    Warning (15610): No output dependent on input pin "SW[8]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 22
+    Warning (15610): No output dependent on input pin "SW[9]" File: /h/u8/c8/01/singhk97/Desktop/CSC258/simulating-life/main.v Line: 22
+Info (21057): Implemented 1433 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 15 input pins
     Info (21059): Implemented 35 output pins
-    Info (21061): Implemented 907 logic cells
+    Info (21060): Implemented 2 bidirectional pins
+    Info (21061): Implemented 1371 logic cells
     Info (21064): Implemented 9 RAM segments
     Info (21065): Implemented 1 PLLs
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 21 warnings
-    Info: Peak virtual memory: 1125 megabytes
-    Info: Processing ended: Tue Nov 26 17:21:54 2019
-    Info: Elapsed time: 00:00:48
-    Info: Total CPU time (on all processors): 00:00:46
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 28 warnings
+    Info: Peak virtual memory: 1181 megabytes
+    Info: Processing ended: Tue Dec  3 14:00:32 2019
+    Info: Elapsed time: 00:01:00
+    Info: Total CPU time (on all processors): 00:01:27
 
 
 +------------------------------------------+
