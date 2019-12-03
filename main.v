@@ -4,6 +4,9 @@ module main
 		// Your inputs and outputs here
         KEY,
         SW,
+    // Mouse/Keyboard
+        PS2_CLK,
+        PS2_DAT
 		// The ports below are for the VGA output.  Do not change.
 		VGA_CLK,   						//	VGA Clock
 		VGA_HS,							//	VGA H_SYNC
@@ -29,6 +32,9 @@ module main
 	output	[9:0]	VGA_R;   				//	VGA Red[9:0]
 	output	[9:0]	VGA_G;	 				//	VGA Green[9:0]
 	output	[9:0]	VGA_B;   				//	VGA Blue[9:0]
+
+  inout PS2_CLK,
+	inout PS2_DAT,
 	
 	wire reset_n;
 	assign reset_n = KEY[1];
@@ -44,11 +50,25 @@ module main
    wire start;
 //	wire new_start;
    wire divided_clock;
+  
+  wire set;
+  wire go;
+  wire stop;
 	
   assign divided_start = (start) ? divided_clock : 0;
 
   rateDivider d1(
     .d(26'b10111110101111000010000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+  );
+
+  keyboard_tracker #(.PULSE_OR_HOLD(1)) k1(
+    .clock(CLOCK_50),
+	  .reset(reset_n),
+	 .PS2_CLK(PS2_CLK),
+	 .PS2_DAT(PS2_DAT),
+	 .s(set),
+   .enter(go),
+   .space(stop)
   );
 
   // Create an Instance of a VGA controller - there can be only one!
@@ -91,12 +111,12 @@ module main
   end
   
   control c1(
-  .go(KEY[2]),
+  .go(go),
   .reset(reset_n),
-  .set(KEY[0]),
+  .set(set),
   .clock(CLOCK_50),
   .loadVal(SW[7:0]),
-  .stop(KEY[3]),
+  .stop(stop),
   .ldX(loadX),
   .ldY(loadY),
   .load(load),
