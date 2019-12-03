@@ -54,19 +54,21 @@ module main
   wire set;
   wire go;
   wire stop;
-	
+  wire reset;
+  
   assign divided_start = (start) ? divided_clock : 0;
 
   rateDivider d1(
-    .d(26'b10111110101111000010000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(reset_n)
+    .d(26'b10111110101111000010000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(~reset)
   );
 
-  keyboard_tracker #(.PULSE_OR_HOLD(1)) k1(
+  keyboard_tracker #(.PULSE_OR_HOLD(0)) k1(
     .clock(CLOCK_50),
 	  .reset(reset_n),
 	 .PS2_CLK(PS2_CLK),
 	 .PS2_DAT(PS2_DAT),
 	 .s(set),
+	 .r(reset),
    .enter(go),
    .space(stop)
   );
@@ -76,7 +78,7 @@ module main
 	// image file (.MIF) for the controller.
 
 	vga_adapter VGA(
-			.resetn(reset_n),
+			.resetn(~reset),
 			.clock(CLOCK_50),
 			.colour(colour),
 			.x(x),
@@ -111,12 +113,12 @@ module main
   end
   
   control c1(
-  .go(go),
-  .reset(reset_n),
-  .set(set),
+  .go(~go),
+  .reset(~reset),
+  .set(~set),
   .clock(CLOCK_50),
   .loadVal(SW[7:0]),
-  .stop(stop),
+  .stop(~stop),
   .ldX(loadX),
   .ldY(loadY),
   .load(load),
@@ -124,7 +126,7 @@ module main
   .writeEn(writeEn)
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(reset_n), .out_x(x), .out_y(y), .out_color(colour));
+  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(~reset), .out_x(x), .out_y(y), .out_color(colour));
 
 endmodule
 
