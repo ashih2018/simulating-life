@@ -121,7 +121,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 	 inout PS2_CLK,
 	 inout PS2_DAT,
 	 
-	 output s,
+	 output s, r, d,
 	 output space, enter
 	 );
 	 
@@ -144,7 +144,8 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 					// W_CODE = 8'h1d,
 					// A_CODE = 8'h1c,
 					S_CODE = 8'h1b,
-					// D_CODE = 8'h23,
+					R_CODE = 8'h2d,
+					D_CODE = 8'h23,
 					// LEFT_CODE  = 8'h6b,
 					// RIGHT_CODE = 8'h74,
 					// UP_CODE    = 8'h75,
@@ -158,7 +159,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 	 // and low otherwise. They directly represent the keyboard's state.
 	 // TODO: ADD TO HERE WHEN IMPLEMENTING NEW KEYS	 
     // reg w_press, a_press, s_press, d_press;
-		reg s_press;
+		reg s_press, r_press, d_press;
 	//  reg left_press, right_press, up_press, down_press;
 	 reg space_press, enter_press;
 	 
@@ -167,7 +168,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 	 // it is pressed down.
 	 // TODO: ADD TO HERE WHEN IMPLEMENTING NEW KEYS
 	//  reg w_lock, a_lock, s_lock, d_lock;
-	reg s_lock;
+	reg s_lock, r_lock, d_lock;
 	//  reg left_lock, right_lock, up_lock, down_lock;
 	 reg space_lock, enter_lock;
 	 
@@ -177,7 +178,8 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
     // assign w = w_press && ~(w_lock && PULSE_OR_HOLD);
     // assign a = a_press && ~(a_lock && PULSE_OR_HOLD);
     assign s = s_press && ~(s_lock && PULSE_OR_HOLD);
-    // assign d = d_press && ~(d_lock && PULSE_OR_HOLD);
+	 assign r = r_press && ~(r_lock && PULSE_OR_HOLD);
+    assign d = d_press && ~(d_lock && PULSE_OR_HOLD);
 
     // assign left  = left_press && ~(left_lock && PULSE_OR_HOLD);
     // assign right = right_press && ~(right_lock && PULSE_OR_HOLD);
@@ -210,7 +212,8 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 		  // w_lock <= w_press;
 		  // a_lock <= a_press;
 		  s_lock <= s_press;
-		  // d_lock <= d_press;
+		  r_lock <= r_press;
+		  d_lock <= d_press;
 		  
 		  // left_lock <= left_press;
 		  // right_lock <= right_press;
@@ -227,7 +230,8 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 				// w_press <= 1'b0;
 				// a_press <= 1'b0;
 				s_press <= 1'b0;
-				// d_press <= 1'b0;
+				r_press <= 1'b0;
+				d_press <= 1'b0;
 				// left_press  <= 1'b0;
 				// right_press <= 1'b0;
 				// up_press    <= 1'b0;
@@ -238,7 +242,8 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 				// w_lock <= 1'b0;
 				// a_lock <= 1'b0;
 				s_lock <= 1'b0;
-				// d_lock <= 1'b0;
+				r_lock <= 1'b0;
+				d_lock <= 1'b0;
 				// left_lock  <= 1'b0;
 				// right_lock <= 1'b0;
 				// up_lock    <= 1'b0;
@@ -255,7 +260,8 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 		      //     W_CODE: w_press <= curr_state == MAKE;
 					//  A_CODE: a_press <= curr_state == MAKE;
 					 S_CODE: s_press <= curr_state == MAKE;
-					//  D_CODE: d_press <= curr_state == MAKE;
+					 R_CODE: r_press <= curr_state == MAKE;
+					 D_CODE: d_press <= curr_state == MAKE;
 					 
 					//  LEFT_CODE:  left_press  <= curr_state == MAKE;
 					//  RIGHT_CODE: right_press <= curr_state == MAKE;
