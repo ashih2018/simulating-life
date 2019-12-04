@@ -262,7 +262,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
             if (neighbors == 3) begin
               changed[2*num_changed] = row;
               changed[2*num_changed + 1] = col;
-              changed_color[num_changed] = colour_in;
+              changed_color[num_changed] = in_colour;
               num_changed = num_changed + 1;
 //				  $display("1    = %0d", 8);
               draw <= 1;
