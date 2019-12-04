@@ -4,6 +4,7 @@ module main
 		// Your inputs and outputs here
         KEY,
         SW,
+		  LEDR,
     // Mouse/Keyboard
         PS2_CLK,
         PS2_DAT,
@@ -32,6 +33,7 @@ module main
 	output	[9:0]	VGA_R;   				//	VGA Red[9:0]
 	output	[9:0]	VGA_G;	 				//	VGA Green[9:0]
 	output	[9:0]	VGA_B;   				//	VGA Blue[9:0]
+	output [3:0] LEDR;
 
   inout PS2_CLK;
 	inout PS2_DAT;
@@ -55,11 +57,18 @@ module main
   wire go;
   wire stop;
   wire reset;
-  
+  wire divide;
+  wire colour_key;
+  reg [25:0] rate;
+  reg set_rate = 1;
+  reg colour_toggle = 1;
+
+  assign rate = (set_rate) ? 26'b1011111010111100001000000 : 26'b10111110101111000010000000;
+  assign colour_in = (colour_toggle) ? 3'b111 : 3'b101;
   assign divided_start = (start) ? divided_clock : 0;
 
   rateDivider d1(
-    .d(26'b10111110101111000010000000), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(~reset)
+    .d(rate), .clock(CLOCK_50), .clock_slower(divided_clock), .reset(real_reset)
   );
 
   keyboard_tracker #(.PULSE_OR_HOLD(0)) k1(
@@ -69,6 +78,8 @@ module main
 	 .PS2_DAT(PS2_DAT),
 	 .s(set),
 	 .r(reset),
+	 .d(divide),
+   .c(colour_key)
    .enter(go),
    .space(stop)
   );
@@ -98,10 +109,23 @@ module main
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "black.mif";
 
+  reg [2:0] colour_in;
   reg [7:0]x_in;
   reg [7:0]y_in;
   wire [7:0]loadVal;
-
+  // wire [7:0] mouseX;
+  // wire [7:0] mouseY;
+  // wire left_click;
+  // wire right_click;
+  // wire count;
+  // assign LEDR[0] = left_click;
+  // assign LEDR[1] = right_click;
+  
+  
+  // mouse_tracker mouse(.clock(CLOCK_50), .reset(reset_n), .enable_tracking(1'b1), .PS2_CLK(PS2_CLK), .PS2_DAT(PS2_DAT),
+  //                     .x_pos(mouseX), .y_pos(mouseY), .left_click(left_click), .right_click(right_click), .count(count));
+						 
+	
   assign loadVal = SW[7:0];
 
   always @(*)
@@ -110,33 +134,48 @@ module main
       x_in = loadVal;
     if (loadY == 1'b1)
       y_in = loadVal;
+    if (divide == 1'b1)
+      set_rate = ~set_rate;
+    if (colour_key == 1'b1)
+      colour_toggle = ~colour_toggle;
   end
   
+  wire real_go;
+  wire real_set;
+  wire real_stop;
+  wire real_reset;
+  
+  assign real_go = ~go;
+  assign real_set = ~set;
+  assign real_stop = ~stop;
+  assign real_reset = ~reset;
+  
   control c1(
-  .go(~go),
-  .reset(~reset),
-  .set(~set),
+  .go(real_go),
+  .reset(real_reset),
+  .set(real_set),
   .clock(CLOCK_50),
   .loadVal(SW[7:0]),
-  .stop(~stop),
+  .stop(real_stop),
   .ldX(loadX),
   .ldY(loadY),
   .load(load),
   .start(start),
-  .writeEn(writeEn)
+  .writeEn(writeEn),
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(~reset), .out_x(x), .out_y(y), .out_color(colour));
+  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(real_reset), .out_x(x), .out_y(y), .out_color(colour), in_colour(colour_in));
 
 endmodule
 
-module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_color);
+module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_color, in_colour);
   input load;
 	input reset_n;
   input clock;
   input [7:0] x_in;
   input [7:0] y_in;
   input start;
+  input [2:0] in_colour;
   output reg [7:0] out_x;
   output reg [7:0] out_y;
   output reg [2:0] out_color;
@@ -149,7 +188,20 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
 
   always @(posedge clock)
   begin
-    if (reset_n == 0) begin: RESET
+	 if (draw == 1) begin: DRAW
+      if (changed_count <= 0) begin
+        draw <= 0;
+      end
+      else if (changed_count > 0) begin
+        cells[changed[2*changed_count-2]][changed[2*changed_count-1]] <= ~cells[changed[2*changed_count-2]][changed[2*changed_count-1]];
+        out_x <= changed[2*changed_count-2];
+        out_y <= changed[2*changed_count-1];
+        out_color <= changed_color[changed_count-1];
+        changed_count <= changed_count - 1;
+      end
+    end
+  
+    else if (reset_n == 0) begin: RESET
       // $display("1    = %0d",1);
       integer i;
       integer j;
@@ -162,16 +214,16 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
           if (cells[i][j] === 1'bx) begin
             cells[i][j] = 0;
           end
-          else if (cells[i][j] == 1) begin
-            changed[2*num_changed] = i;
-            changed[2*num_changed + 1] = j;
-            changed_color[num_changed] = 3'b0;
+          else if (cells[i][j] == 1'b1) begin
+            changed[2*num_changed] <= i;
+            changed[2*num_changed + 1] <= j;
+            changed_color[num_changed] <= 3'b0;
             num_changed = num_changed + 1;
-            do_draw = 1;
+            draw <= 1;
           end
         end
       end
-      draw <= do_draw;
+//		draw <= 1;
       changed_count <= num_changed;
     end
 
@@ -179,21 +231,8 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       cells[x_in][y_in] = 1;
       out_x <= x_in;
       out_y <= y_in;
-      out_color <= 3'b111;
+      out_color <= in_colour;
       draw <= 0;
-    end
-
-    else if (draw == 1) begin: DRAW
-      if (changed_count <= 0) begin
-        draw <= 0;
-      end
-      else if (changed_count > 0) begin
-        cells[changed[2*changed_count-2]][changed[2*changed_count-1]] <= ~cells[changed[2*changed_count-2]][changed[2*changed_count-1]];
-        out_x <= changed[2*changed_count-2];
-        out_y <= changed[2*changed_count-1];
-        out_color <= changed_color[changed_count-1];
-        changed_count <= changed_count - 1;
-      end
     end
 
     else if (start == 1 & draw == 0) begin: SIMULATE
@@ -223,7 +262,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
             if (neighbors == 3) begin
               changed[2*num_changed] = row;
               changed[2*num_changed + 1] = col;
-              changed_color[num_changed] = 3'b111;
+              changed_color[num_changed] = in_colour;
               num_changed = num_changed + 1;
 //				  $display("1    = %0d", 8);
               draw <= 1;
@@ -279,7 +318,7 @@ module control(
   ldY,
   load,
   start,
-  writeEn
+  writeEn,
   );
   input go;
   input reset;
@@ -336,7 +375,7 @@ module control(
     load = 0;
 	 writeEn = 0;
     case (current_state)
-      BASE: $display("1    = %0d",2);
+      BASE: writeEn = 1;
       LOAD_X: begin
         ldX = 1;
         $display("1    = %0d",3);
