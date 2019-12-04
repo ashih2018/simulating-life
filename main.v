@@ -59,7 +59,7 @@ module main
   wire reset;
   wire divide;
   wire colour_key;
-  reg [25:0] rate;
+  wire [25:0] rate;
   reg set_rate = 1;
   reg colour_toggle = 1;
 
@@ -79,7 +79,7 @@ module main
 	 .s(set),
 	 .r(reset),
 	 .d(divide),
-   .c(colour_key)
+   .c(colour_key),
    .enter(go),
    .space(stop)
   );
@@ -109,7 +109,7 @@ module main
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "black.mif";
 
-  reg [2:0] colour_in;
+  wire [2:0]colour_in;
   reg [7:0]x_in;
   reg [7:0]y_in;
   wire [7:0]loadVal;
@@ -164,7 +164,7 @@ module main
   .writeEn(writeEn),
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(real_reset), .out_x(x), .out_y(y), .out_color(colour), in_colour(colour_in));
+  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(real_reset), .out_x(x), .out_y(y), .out_color(colour), .in_colour(colour_in));
 
 endmodule
 

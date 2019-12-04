@@ -146,7 +146,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 					S_CODE = 8'h1b,
 					R_CODE = 8'h2d,
 					D_CODE = 8'h23,
-					C_CODE = 8'21,
+					C_CODE = 8'h21,
 					// LEFT_CODE  = 8'h6b,
 					// RIGHT_CODE = 8'h74,
 					// UP_CODE    = 8'h75,
@@ -267,7 +267,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 					 S_CODE: s_press <= curr_state == MAKE;
 					 R_CODE: r_press <= curr_state == MAKE;
 					 D_CODE: d_press <= curr_state == MAKE;
-					 C_DOE: c_press <= curr_state == MAKE;
+					 C_CODE: c_press <= curr_state == MAKE;
 					 
 					//  LEFT_CODE:  left_press  <= curr_state == MAKE;
 					//  RIGHT_CODE: right_press <= curr_state == MAKE;
