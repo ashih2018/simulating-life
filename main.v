@@ -58,9 +58,13 @@ module main
   wire stop;
   wire reset;
   wire divide;
+  wire colour_key;
   reg [25:0] rate;
-  reg set_rate = 0;
-  
+  reg set_rate = 1;
+  reg colour_toggle = 1;
+
+  assign rate = (set_rate) ? 26'b1011111010111100001000000 : 26'b10111110101111000010000000;
+  assign colour_in = (colour_toggle) ? 3'b111 : 3'b101;
   assign divided_start = (start) ? divided_clock : 0;
 
   rateDivider d1(
@@ -75,6 +79,7 @@ module main
 	 .s(set),
 	 .r(reset),
 	 .d(divide),
+   .c(colour_key)
    .enter(go),
    .space(stop)
   );
@@ -104,20 +109,21 @@ module main
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "black.mif";
 
+  reg [2:0] colour_in;
   reg [7:0]x_in;
   reg [7:0]y_in;
   wire [7:0]loadVal;
-  wire [7:0] mouseX;
-  wire [7:0] mouseY;
-  wire left_click;
-  wire right_click;
-  wire count;
-  assign LEDR[0] = left_click;
-  assign LEDR[1] = right_click;
+  // wire [7:0] mouseX;
+  // wire [7:0] mouseY;
+  // wire left_click;
+  // wire right_click;
+  // wire count;
+  // assign LEDR[0] = left_click;
+  // assign LEDR[1] = right_click;
   
   
-  mouse_tracker mouse(.clock(CLOCK_50), .reset(reset_n), .enable_tracking(1'b1), .PS2_CLK(PS2_CLK), .PS2_DAT(PS2_DAT),
-                      .x_pos(mouseX), .y_pos(mouseY), .left_click(left_click), .right_click(right_click), .count(count));
+  // mouse_tracker mouse(.clock(CLOCK_50), .reset(reset_n), .enable_tracking(1'b1), .PS2_CLK(PS2_CLK), .PS2_DAT(PS2_DAT),
+  //                     .x_pos(mouseX), .y_pos(mouseY), .left_click(left_click), .right_click(right_click), .count(count));
 						 
 	
   assign loadVal = SW[7:0];
@@ -128,12 +134,10 @@ module main
       x_in = loadVal;
     if (loadY == 1'b1)
       y_in = loadVal;
-	 if (divide == 1'b1) begin
-        if (set_rate == 1'b0)
-          rate = 26'b10111110101111000010000000;
-        else
-          rate = 26'b1011111010111100001000000;
-      end
+    if (divide == 1'b1)
+      set_rate = ~set_rate;
+    if (colour_key == 1'b1)
+      colour_toggle = ~colour_toggle;
   end
   
   wire real_go;
@@ -160,17 +164,18 @@ module main
   .writeEn(writeEn),
   );
   
-  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(real_reset), .out_x(x), .out_y(y), .out_color(colour));
+  simulation s1(.clock(CLOCK_50), .load(load), .x_in(x_in), .y_in(y_in), .start(divided_start), .reset_n(real_reset), .out_x(x), .out_y(y), .out_color(colour), in_colour(colour_in));
 
 endmodule
 
-module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_color);
+module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_color, in_colour);
   input load;
 	input reset_n;
   input clock;
   input [7:0] x_in;
   input [7:0] y_in;
   input start;
+  input [2:0] in_colour;
   output reg [7:0] out_x;
   output reg [7:0] out_y;
   output reg [2:0] out_color;
@@ -226,7 +231,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       cells[x_in][y_in] = 1;
       out_x <= x_in;
       out_y <= y_in;
-      out_color <= 3'b111;
+      out_color <= in_colour;
       draw <= 0;
     end
 
@@ -257,7 +262,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
             if (neighbors == 3) begin
               changed[2*num_changed] = row;
               changed[2*num_changed + 1] = col;
-              changed_color[num_changed] = 3'b111;
+              changed_color[num_changed] = colour_in;
               num_changed = num_changed + 1;
 //				  $display("1    = %0d", 8);
               draw <= 1;
