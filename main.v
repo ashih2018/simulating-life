@@ -180,10 +180,10 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
   output reg [7:0] out_y;
   output reg [2:0] out_color;
 
-  reg cells [0:3][0:3];
+  reg cells [0:9][0:9];
   reg draw;
-  reg [7:0] changed [0:10];
-  reg [2:0] changed_color [0:10];
+  reg [7:0] changed [0:20];
+  reg [2:0] changed_color [0:20];
   reg [7:0] changed_count;
 
   always @(posedge clock)
@@ -209,8 +209,8 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
       integer num_changed;
       num_changed = 0;
       do_draw = 0;
-      for (i = 0; i < 4; i = i + 1) begin
-        for (j = 0; j < 4; j = j + 1) begin
+      for (i = 0; i < 10; i = i + 1) begin
+        for (j = 0; j < 10; j = j + 1) begin
           if (cells[i][j] === 1'bx) begin
             cells[i][j] = 0;
           end
@@ -245,13 +245,13 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
 //		$display("1    = %0d", 7);
 //      changed_count <= 0;
       num_changed = 0;
-      for (row = 0; row < 4; row = row + 1) begin
-        for (col = 0; col < 4; col = col + 1) begin
+      for (row = 0; row < 10; row = row + 1) begin
+        for (col = 0; col < 10; col = col + 1) begin
           neighbors = 0;
           if (cells[row][col] == 0) begin: DEAD
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 10) & (col + j >= 0) & (col + j < 10) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1)
                     neighbors = neighbors + 1;
 						  
@@ -272,7 +272,7 @@ module simulation(clock, load, x_in, y_in, start, reset_n, out_x, out_y, out_col
           else begin: ALIVE
             for (i = -1; i <= 1; i = i + 1) begin
               for (j = -1; j <= 1; j = j + 1) begin
-                if ((row + i >= 0) & (row + i < 4) & (col + j >= 0) & (col + j < 4) & ~((i == 0) & (j == 0))) begin
+                if ((row + i >= 0) & (row + i < 10) & (col + j >= 0) & (col + j < 10) & ~((i == 0) & (j == 0))) begin
                   if (cells[row+i][col+j] == 1) begin
 //							$display("1    = %0d", row);
 //						  $display("1    = %0d", col);
